@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:15
+    container_name: russia_championship_db
+    ports:
+      - 5433:5432
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    env_file:
+      - .env-non-dev
+
+  cache:
+    image: redis
+    container_name: russia_championship_cache
+    ports:
+      - 6379:6379
+
+  backend:
+    build:
+      context: .
+    container_name: russia_championship_app
+    env_file:
+      - .env-non-dev
+    depends_on:
+      - db
+      - cache
+    command: ["/backend/docker/app.sh"]
+    ports:
+      - 8000:8000
+
+  celery:
+    build:
+      context: .
+    container_name: russia_championship_celery
+    command: ["/backend/docker/celery.sh"]
+    env_file:
+      - .env-non-dev
+    depends_on:
+      - cache
+
+volumes:
+  postgresdata:
