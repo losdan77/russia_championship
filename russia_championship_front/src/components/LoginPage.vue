@@ -48,7 +48,7 @@
 
             </div>
           </div>
-          <div class="btn-go-register">
+          <div class="btn-go-register" @click="GoToReg">
             <div class="icon-btn">
               <img src="../assets/yandex.png">
             </div>
@@ -81,8 +81,6 @@ import { GoogleLogin } from 'vue3-google-login';
 
 
 const callback = (response) => {
-  // This callback will be triggered when the user selects or login to
-  // his Google account from the popup
   console.log("Handle the response", response)
 }
 
@@ -134,7 +132,13 @@ const callback = (response) => {
         console.log(url.data);
         
         // const url = 'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=73730114414-4hmh3j7il9rg3na6p9qmp4bo983ijb23.apps.googleusercontent.com&redirect_uri=http://localhost:5173/auth/google&scope=openid%20profile%20email&access_type=offline';
-        window.open(url.data, '_self');
+        const newWindow = window.open(url.data, '_blank');
+        if (newWindow) {
+          newWindow.blur();
+        }
+
+        // Сразу переходим на нужный адрес
+        window.open('http://localhost:5173/profile', '_self');
       }
     },
     created() {
@@ -370,6 +374,7 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
 }
 
 .btn-go-register {
+  cursor: pointer;
   display:none;
   flex-direction: row;
   gap: 2vh;

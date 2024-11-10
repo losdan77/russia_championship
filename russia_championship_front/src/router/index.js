@@ -8,7 +8,6 @@ import MainPage from '../components/MainPage.vue';
 import RestoringPage from '../components/RestoringPage.vue';
 import ChangePassword from '../components/ChangePassword.vue';
 
-import axios from 'axios';
 
 const routes = [
   { path: '/', component: PrimaryPage },
