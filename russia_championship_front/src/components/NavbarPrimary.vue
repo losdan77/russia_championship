@@ -50,7 +50,7 @@ export default {
       this.$router.push('/reg')
     },  
     Authorization(){
-      this.$router.push('/login')
+      this.$router.push('/auth')
     }
   },
 };

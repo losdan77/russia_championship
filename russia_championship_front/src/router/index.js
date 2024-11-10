@@ -13,7 +13,7 @@ import axios from 'axios';
 const routes = [
   { path: '/', component: PrimaryPage },
   { path: '/reg', component: RegisterPage },
-  { path: '/auth/google', component: LoginPage },
+  { path: '/auth', component: LoginPage },
   { path: '/profile', component: ProfilePage },
   { path: '/profile/change', component: RedactPage},
   { path: '/info', component: MainPage},

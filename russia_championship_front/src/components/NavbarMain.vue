@@ -51,7 +51,7 @@ export default {
     async logout(){
       const response = await axios.post('/api//user/logout')
       console.log(response);
-      this.$router.push('/login')
+      this.$router.push('/auth')
       this.$emit('LogoutNav')
     },
     goToMain(){

@@ -124,7 +124,7 @@
         this.userType = type;
       },
       GoToLogin(){
-        this.$router.push('/login')
+        this.$router.push('/auth')
       },
       async Register(){
         //axios запрос для получения формы id пользователя

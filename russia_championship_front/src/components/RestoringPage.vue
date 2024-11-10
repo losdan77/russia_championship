@@ -109,7 +109,7 @@ export default {
             console.log(response);
             if (response.status === 200) {
                 alert("Вы успешно восстановили пароль")
-                this.$router.push('/login')
+                this.$router.push('/auth')
             }
             else{
                 alert("Неправильный проверочный код")
