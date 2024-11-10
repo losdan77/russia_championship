@@ -40,13 +40,17 @@
             @click="openWindow"
             >
             Войти через Гугл
-            <!-- <div class="text-btn"  
-            >
-              <GoogleLogin @success="onLoginSuccess" @error="onLoginError" :callback="callback">
-                Войти через Google
-              </GoogleLogin> -->
-
             </div>
+          </div>
+            <div class="btn-yandex">
+            <div class="icon-btn">
+              <img src="../assets/yandex.png">
+              </div>
+              <div class="text-btn"  
+              @click="openWindowYandex"
+              >
+              Войти через Яндекс
+              </div>
           </div>
           <div class="btn-go-register" @click="GoToReg">
             <div class="icon-btn">
@@ -130,15 +134,21 @@ const callback = (response) => {
       async openWindow() {
         const url = await axios.get('/api/user/login/google')
         console.log(url.data);
-        
-        // const url = 'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=73730114414-4hmh3j7il9rg3na6p9qmp4bo983ijb23.apps.googleusercontent.com&redirect_uri=http://localhost:5173/auth/google&scope=openid%20profile%20email&access_type=offline';
         const newWindow = window.open(url.data, '_blank');
         if (newWindow) {
           newWindow.blur();
         }
+        window.open('http://localhost:5173/', '_self');
+      },
 
-        // Сразу переходим на нужный адрес
-        window.open('http://localhost:5173/profile', '_self');
+
+      async openWindowYandex() {
+        const url = await axios.get('/api/user/login/yandex')
+        const newWindow = window.open(url.data, '_blank');
+        if (newWindow) {
+          newWindow.blur();
+        }
+        window.open('http://localhost:5173/', '_self');
       }
     },
     created() {
