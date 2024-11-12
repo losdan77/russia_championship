@@ -67,7 +67,7 @@
 
 <script>
 import axios from 'axios';
-
+import eventBus from '../eventBus';
 export default {
     data() {
         return {
@@ -81,42 +81,49 @@ export default {
     },
     methods: {
         async Authorization() {
-            const response = await axios.post(`/api/user/dont_remember_password?email=${this.email}`)
-            console.log(response);
-            if (response.status === 200) {
-                this.isAuthorized = true;
+            try {
+                const response = await axios.post(`/api/user/dont_remember_password?email=${this.email}`)
+                console.log(response);
+                if (response.status === 200) {
+                    this.isAuthorized = true;
+                }
+            } catch (error) {
+                eventBus.emit('show-modal', 'Пользователя с такой почтой в системе нет');
             }
-            else{
-                alert("Такой почты нет")
-            }
+
         },
         async goToNextPage() {
-            const response = await axios.post(`/api/user/verify_singlemode_code_from_mail?email=${this.email}&code=${this.authCode}`)
-            console.log(response);
-            if (response.status === 200) {
-                this.isCodeCorrect = true;
+            try {
+                const response = await axios.post(`/api/user/verify_singlemode_code_from_mail?email=${this.email}&code=${this.authCode}`)
+                console.log(response);
+                if (response.status === 200) {
+                    this.isCodeCorrect = true;
+                }
+            } catch (error) {
+                eventBus.emit('show-modal', 'Неверный проверочный код ');
             }
-            else{
-                alert("Неправильный проверочный код")
             }
+
         },
         async SubmitRestoring(){
-            const response = await axios.post(`/api/user/create_new_password`,{
-                email: this.email,
-                new_password: this.password,
-                verify_new_password: this.verify_password
-            })
-            console.log(response);
+            try {
+                const response = await axios.post(`/api/user/create_new_password`,{
+                    email: this.email,
+                    new_password: this.password,
+                    verify_new_password: this.verify_password
+                })
             if (response.status === 200) {
-                alert("Вы успешно восстановили пароль")
+                eventBus.emit('show-modal', `Доступ к аккаунту ${this.email} восстановлен`);
                 this.$router.push('/auth')
+                }
+            } catch (error) {
+                eventBus.emit('show-modal', 'Приносим извенения, повторите попытку позже');  
             }
-            else{
-                alert("Неправильный проверочный код")
-            }
+
+            
         }
     }
-};
+
 </script>
 
 <style scoped>
