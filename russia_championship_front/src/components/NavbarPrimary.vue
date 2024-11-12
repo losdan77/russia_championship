@@ -21,13 +21,19 @@
     </div>
 
     <div v-if="isMenuOpen" class="mobile-menu">
-      <!-- <button class="navbar-button" id="btn-menu" @click="closeMenu">Войти</button>
-      <button class="navbar-button" id="btn-menu" @click="closeMenu">Зарегистрироваться</button>
-      <button class="navbar-button" id="btn-menu-telegram" @click="closeMenu">Телеграм</button> -->
-
-      <button class="navbar-button" id="btn-menu" @click="Authorization">Войти</button>
-      <button class="navbar-button" id="btn-menu" @click="GoToReg">Зарегистрироваться</button>
+      <button class="navbar-button" id="btn-menu" @click="GoToReg">Войти</button>
+      <button class="navbar-button" id="btn-menu" @click="Authorization()">Зарегистрироваться</button>
       <button class="navbar-button" id="btn-menu-telegram" @click="closeMenu">Телеграм</button>
+      <div>
+        <button class="navbar-button" id="btn-menu" @click="Authorization">Войти</button>
+        <button class="navbar-button" id="btn-menu" @click="GoToReg">Зарегистрироваться</button>
+        <button class="navbar-button" id="btn-menu-telegram" @click="closeMenu">Телеграм</button>
+      </div>
+      <!-- <div>
+        <button class="navbar-button" id="btn-menu-telegram" @click="Authorization">Профиль</button>
+        <button class="navbar-button" id="btn-menu" @click="GoToReg">Выйти</button>
+      </div> -->
+     
     </div>
   </nav>
 </template>

@@ -9,8 +9,8 @@
         <img src="..//assets/telegram.png"/>
       </button>
       <button class="navbar-button" id="btn-telegram"><div class="img"></div></button>
-      <button class="navbar-button" id="btn-input" @click="goToProfile">Профиль</button>
-      <button class="navbar-button" id="btn-reg">
+      <button class="navbar-button" id="btn-input" @click="goToProfile" v-if="onProfile">Профиль</button>
+      <button class="navbar-button" @click="logout" id="btn-reg">
         <div class="text-btn" @click="logout">Выйти</div> <img src="..//assets/btn-exit.png"/>
         </button>
       
@@ -32,10 +32,13 @@
 
 <script>
 import axios from 'axios';
+import eventBus from '../eventBus';
+
 export default {
   data() {
     return {
       isMenuOpen: false,
+      onProfile : false
     };
   },
   methods: {
@@ -46,18 +49,32 @@ export default {
       this.isMenuOpen = false;
     },
     goToProfile(){
+      console.log(this.$route.fullPath)
+      // const url =  this.$route.fullPath
+      
+      // if (url === '/profile') {
+      //   eventBus.emit('show-modal', 'Вы в своём профиле');
+      // }
       this.$router.push('/profile')
     },
     async logout(){
-      const response = await axios.post('/api//user/logout')
-      console.log(response);
       this.$router.push('/auth')
+      const response = await axios.post('/api//user/logout')
+      eventBus.emit('show-modal', 'Вы вышли из аккаунта');
       this.$emit('LogoutNav')
     },
     goToMain(){
       this.$router.push('/')
     }
   },
+  mounted(){
+    if (this.$route.fullPath === '/profile') {
+      this.onProfile = false
+    }else {
+      this.onProfile = true
+    }
+
+  }
 };
 </script>
 

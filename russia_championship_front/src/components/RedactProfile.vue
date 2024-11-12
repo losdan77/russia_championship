@@ -52,6 +52,24 @@
           <input type="email" id="email" v-model="email" placeholder="ivanov.ivan@mail.ru" required />
         </div>
       </div>
+
+
+      <div class="line-input" id="down-line">
+        <div class="input-box">
+          <label for="old_password">Актуальный пароль</label>
+          <input type="password" id="city" v-model="old_password" />
+        </div>
+        <div class="input-box">
+          <label for="new_password">Новый пароль</label>
+          <input type="new_password" id="new_password" v-model="new_password" required />
+        </div>
+        <div class="input-box">
+          <label for="verify_new_password">Повторите новый пароль</label>
+          <input type="verify_new_password" id="verify_new_password" v-model="verify_new_password" required />
+        </div>
+      </div>
+
+
       <div class="description-line">
         <div class="text-discription">Редактировать "О себе"</div>
         <div class="line-textarea">
@@ -65,72 +83,12 @@
 
 
   </div>
-    <!-- <div class="profile-page">
-      <div class="profile-header">
-        <div class="image-redactor">
-          <div class="profile-picture">
-            <img src="https://via.placeholder.com/100" alt="Profile Picture" class="main-image">
-          </div>
-       <p class="change-photo">Aasdasd</p> 
-          <input type="file" id="fileupload" name="image" @change="handleFileUpload" v-if="!image">
-          <button v-if="image">Добавить</button>
-        </div>
-        <div class="user-info">
-          <h2>{{ fullName }}</h2>
-          <p class="phone">{{ phone }}</p>
-          <p class="rating">Рейтинг: {{ rating }}</p>
-        </div>
-      </div>
-  
-      <div class="edit-info">
-        <h3>Изменить данные</h3>
-        <form @submit.prevent="updateProfile">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="fullName">ФИО</label>
-              <input type="text" id="fullName" v-model="fullName" required />
-            </div>
-            <div class="form-group">
-              <label for="phone">Телефон</label>
-              <input type="tel" id="phone" v-model="phone" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="city">Город</label>
-              <input type="text" id="city" v-model="city" />
-            </div>
-            <div class="form-group">
-              <label for="email">Почта</label>
-              <input type="email" id="email" v-model="email" required />
-            </div>
-          </div>
-          <button type="submit" class="save-button">Сохранить изменения</button>
-        </form>
-      </div>
-  
-      <div class="about-me">
-        <h3>Информация о себе</h3>
-        <textarea v-model="aboutMe" rows="5" placeholder="Напишите о себе..."></textarea>
-        <button class="change-button" @click="changeInfo">Изменить</button>
-      </div>
-  
-      <div class="reviews">
-        <h3>Отзывы</h3>
-        <div v-for="(review, index) in reviews" :key="index" class="review">
-          <p class="review-rating">Оценка: {{ review.rating }}⭐</p>
-          <p class="review-message">{{ review.message }}</p>
-          <p class="review-author">— {{ review.reviewer }}</p>
-        </div>
-      </div>
-    </div> -->
-  
-
   </template>
   
   
   <script>
-
+import axios from 'axios';
+import eventBus from '../eventBus';
 
   export default {
     data() {
@@ -142,29 +100,32 @@
         email: 'lossdan@asd',
         aboutMe: '♥',
         image : null,
-        reviews: [
-          {
-            rating: 5,
-            message: 'Отличная работа!',
-            reviewer: 'Анна Петрова',
-          },
-          {
-            rating: 4,
-            message: 'Все было хорошо, но есть некоторые замечания.',
-            reviewer: 'Сергей Смирнов',
-          },
-          {
-            rating: 5,
-            message: 'Прев exceeded my expectations!',
-            reviewer: 'Мария Кузнецова',
-          },
-        ],
+        new_password : '',
+        old_password : '',
+        verify_new_password : '',
       };
     },
 
     methods: {
-      commitChange(){
-        alert('Сохранено')
+      async commitChange(){
+        if (this.new_password !== this.verify_new_password) {
+          eventBus.emit('show-modal', 'Пароли не совпадают');
+          return 0
+        }
+        if (this.new_password === '' ||  this.verify_new_password ===''  ||   this.old_password ===''){
+          eventBus.emit('show-modal', 'Все поля паролей должны быть заполнены');
+          return 0
+        }
+
+
+        const response = await axios.patch('/api/user/change_password',{
+          old_password: this.old_password,
+          new_password: this.new_password,
+          verify_new_password : this.verify_new_password
+        })
+        console.log(response);
+        eventBus.emit('show-modal', 'Пароль изменён');
+        
       }
 
       // updateProfile() {
@@ -314,6 +275,7 @@
   .change-info-line {
     width:100%;
     height:35%;
+    
     display:flex;
     flex-direction: column;
   }
@@ -371,7 +333,7 @@
   }
 
   .btn-change-info {
-    height:70%;
+    height:40px;
     background-color: rgb(42, 42, 42);
     color:#fff;
     border:none;
@@ -381,7 +343,7 @@
 
  
   .description-line {
-    height: 19%;
+    height: 50%;
     display: flex;
     flex-direction: column;
     gap:2%;
@@ -412,7 +374,7 @@
 
   .btn-line-1 {
     width:93%;
-    height:30%;
+    height:fit-content;
     padding-left:7%;
     display:flex;
     justify-content: start;

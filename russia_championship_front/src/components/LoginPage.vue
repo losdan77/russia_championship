@@ -4,7 +4,7 @@
       <div class="section" id="section-1">
         <div class="content-section-1">
           <div class="logo-img">
-            <img src="../assets/yandex.png"/>
+            <img src="../assets/yandex.png" @click="goToHome"/>
           </div>
           <div class="btn-reg" @click="GoToReg()">Создать аккаунт</div>
         </div>
@@ -82,22 +82,22 @@
   <script>
 import axios from 'axios';
 import { GoogleLogin } from 'vue3-google-login';
-
-
-const callback = (response) => {
-  console.log("Handle the response", response)
-}
+import ModalLogin from './Modals/GlobalModal.vue';
+import eventBus from '../eventBus';
 
   export default {
     data() {
       return {
         email: '',
         password: '',
-        code : null
+        code : null,
+        showModal: false,
+        modalMessage: '',
       };
     },
     components : {
-      GoogleLogin
+      GoogleLogin,
+      ModalLogin
     },
     methods: {
       async exchangeCodeForToken() {
@@ -105,31 +105,32 @@ const callback = (response) => {
         const response = await axios.get(`/api/user/auth/google?code=${this.code}`)
         console.log(this.code);
         console.log(response.data);
-
-        //http://localhost:5173/auth/google?code=4%2F0AeanS0a59o1q5SxI4f0eq_F6FCQo3vhHuuTetZ0BmU35X6aZermfztYd5ddbFihr85n1AA&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=consent
       },
       
       GoToRestoring(){
         this.$router.push('/user/restoring')
       },
       onLoginClick() {
-        // Здесь можно выполнить дополнительные действия перед авторизацией
+        
         console.log('Кнопка авторизации нажата');
       },
       GoToReg(){
         this.$router.push('/reg')
       },  
       async Authorization(){
-        const response = await axios.post('/api/user/login', {
+        try {
+          const response = await axios.post('/api/user/login', {
           email: this.email,
           password: this.password,
         });
-        console.log(response);
-        if(!response.data){
-          return 0
+        if (response) {
+          eventBus.emit('show-modal', 'Вы успешно авторизованы');
+          this.$router.push('/profile')
         }
-        alert("Вы авторизованы")
-        this.$router.push('/profile')
+        } catch (error) {
+          eventBus.emit('show-modal', 'Неправильный Email или пароль');
+        }
+        
       },
       async openWindow() {
         const url = await axios.get('/api/user/login/google')
@@ -151,11 +152,13 @@ const callback = (response) => {
         window.open('http://localhost:5173/', '_self');
       }
     },
+    // goToHome(){
+    //   this.$router.push('/')
+    // },
     created() {
 
     const urlParams = new URLSearchParams(window.location.search);
     this.code = urlParams.get('code'); // Извлекаем 'code'
-    console.log(this.code);
 
     if (this.code) {
       // Если код есть, отправляем его на сервер для получения токена
