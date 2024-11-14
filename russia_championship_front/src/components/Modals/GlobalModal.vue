@@ -1,9 +1,11 @@
 <template>
-  <div v-show="isVisible" class="modal-overlay" @click="closeModal">
-    <div class="modal-content" :class="{ 'slide-down': isVisible }">
-      <p>{{ message }}</p>
+  <transition name="modal-fade">
+    <div v-show="isVisible" class="modal-overlay" @click="closeModal">
+      <div class="modal-content">
+        <p>{{ message }}</p>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -41,7 +43,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -51,7 +53,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: start;
-  background: rgba(0, 0, 0, 0.4);
+  /* background: rgba(0, 0, 0, 0.4); */
 }
 
 .modal-content {
@@ -59,14 +61,17 @@ export default {
   padding: 20px 30px;
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-  pointer-events: auto; 
-  opacity: 0;
-  transform: translateY(-50px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: auto;
 }
 
-.slide-down {
-  opacity: 1;
-  transform: translateY(20px);
+
+.modal-fade-enter-active, .modal-fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
+.modal-fade-enter-from, .modal-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-50px);
+}
+
+
 </style>
