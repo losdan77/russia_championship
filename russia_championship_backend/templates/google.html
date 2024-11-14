@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google</title>
+</head>
+<body>
+    <div class="box">
+        <div class="logo">
+            <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fcalldynamics.com.au%2Fhome%2Fnew-google-logo-png%2F&psig=AOvVaw3MsfLHMfPxCiBUgh2NBT9c&ust=1731682447113000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJCw8P2J3IkDFQAAAAAdAAAAABAE">
+        </div>
+
+        <div class="title">
+            Данные аккунта:
+        </div>
+
+        <div class="mail-value">
+            zavatskiy_13@mail.ru
+        </div>
+
+        <div class="accept-message">
+            Вы успешно вошли в аккаунт<br>
+            через Google 
+        </div>
+
+        <div class="btn-box">
+            <div class="btn-continue">Продолжить</div>
+        </div>
+    </div>    
+</body>
+</html>
+
+<style scoped>
+.box {
+    width:30vw;
+    height:40vh;
+    background-color: rgb(255, 255, 255);
+    margin: auto;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    position: absolute;
+    display:flex;
+    flex-direction: column;
+    border-radius: 2vh;
+    border:1px solid #ddd;
+    gap:1vh;
+    padding-top:3vh;
+}
+
+.logo {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+    height:5vh;
+}
+
+.logo img {
+    width:4.5vw;
+    height:3vh;
+}
+
+.title {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size:3vh;
+    font-family:Arial, Helvetica, sans-serif
+}
+
+.mail-value {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size:1.5vh;
+    font-family:Arial, Helvetica, sans-serif
+}
+
+.accept-message {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size:3vh;
+    font-family:Arial, Helvetica, sans-serif;
+    padding-top:2vh;
+    text-align: center;
+}
+
+.btn-box {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding-top:4vh;
+}
+
+.btn-continue {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(11,87,208);
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 1.6vh;
+    color:#fff;
+    height:4vh;
+    padding: 0 2vw;
+    border-radius: 1vw;
+    cursor:pointer;
+}
+
+.btn-continue:hover {
+    background-color: rgb(10, 79, 190);
+}
+@media (max-width: 1200px) {
+    .box {
+        width:35vw;
+    }
+    .logo img {
+        width: 10vw;
+    }
+    .accept-message {
+        font-size:2vh;
+    }
+}
+
+@media (max-width: 700px) {
+    .box {
+        width:90vw;
+    }
+    .logo img {
+        width: 15vw;
+    }
+    .accept-message {
+        font-size:2vh;
+    }
+}
+</style>
