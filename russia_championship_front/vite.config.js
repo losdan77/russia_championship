@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -8,7 +11,7 @@ export default defineConfig({
     host : true,
     proxy: {
       '/api': {
-        target: 'http://192.168.224.16', // Добавлен http://
+        target: "http://172.20.10.3:8000" || process.env.URL, // Добавлен http://
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''),
       },

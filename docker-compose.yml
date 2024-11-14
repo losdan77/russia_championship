@@ -8,12 +8,16 @@ services:
       - postgresdata:/var/lib/postgresql/data
     env_file:
       - ./russia_championship_backend/.env-non-dev
+    networks:
+      - app_network
 
   cache:
     image: redis
     container_name: russia_championship_cache
     ports:
       - 6370:6379
+    networks:
+      - app_network
 
   backend:
     build:
@@ -27,6 +31,8 @@ services:
     command: ["/backend/docker/app.sh"]
     ports:
       - 8001:8000
+    networks:
+      - app_network
 
   celery:
     build:
@@ -37,6 +43,8 @@ services:
       - ./russia_championship_backend/.env-non-dev
     depends_on:
       - cache
+    networks:
+      - app_network
 
   bot:
     build:
@@ -47,6 +55,24 @@ services:
       - ./russia_championship_bot/.env-non-dev
     depends_on:
       - db
+    networks:
+      - app_network
+
+  front:
+    build:
+      context: ./russia_championship_front/
+    container_name: russia_championship_front
+    ports:
+      - 5170:5173
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
 
 volumes:
   postgresdata:
+
+networks:
+  app_network:
+    driver: bridge
