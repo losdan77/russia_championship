@@ -6,7 +6,7 @@
           <div class="logo-img">
             <img src="../assets/yandex.png" @click="goToHome"/>
           </div>
-          <div class="btn-reg" @click="GoToReg()">Создать аккаунт</div>
+          <div class="btn-reg" @click="GoToReg()">Сосать хуй</div>
         </div>
       </div>
     </section>
