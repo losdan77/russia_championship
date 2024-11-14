@@ -102,8 +102,10 @@
   </template>
   
   <script>
-  import axios from 'axios'
-  export default {
+import axios from 'axios'
+import eventBus from '../eventBus';
+
+export default {
     data() {
       return {
         userType: 'individual',
@@ -137,7 +139,7 @@
         if (!response.data) {
           return 0
         }
-        alert('Успешно')
+        eventBus.emit('show-modal', 'Вы успешно зарегистрировались');
         this.$router.push('/profile')
       },
       handleFileUpload(event) {
@@ -148,7 +150,7 @@
       },
       submitForm() {
         if (this.password !== this.confirmPassword) {
-          alert("Пароли не совпадают");
+          eventBus.emit('show-modal', 'Пароли не совпадают');
         } else {
         }
       },
@@ -170,7 +172,7 @@
 
         } catch (error) {
           console.log(error);
-          
+          eventBus.emit('show-modal', 'Ошибка при добавлении фото, попробуйте позже');
         }
         alert("Добавить фото")
       }
