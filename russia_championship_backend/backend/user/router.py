@@ -1,6 +1,7 @@
 import random
 from pydantic import EmailStr
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Response, Depends, Request
+from fastapi.templating import Jinja2Templates
 from backend.config import settings
 from backend.exception import VerifyPasswordException, ShortPasswordException
 from backend.exception import HasExistingUserException, VerifyOldPasswordException
@@ -17,6 +18,7 @@ from backend.tasks.tasks import send_new_password_on_email
 from backend.client.google import get_google_user_info
 from backend.client.yandex import get_yandex_user_info
 
+templates = Jinja2Templates(directory="templates")
 
 router = APIRouter(
     prefix='/user',
@@ -147,7 +149,7 @@ async def login_google():
 
 
 @router.get('/auth/google')
-async def auth_google(code: str, response: Response):
+async def auth_google(code: str, response: Response, request: Request):
     print(code)
     user_data = get_google_user_info(code)
     
@@ -155,7 +157,8 @@ async def auth_google(code: str, response: Response):
     if user:
         access_token = create_access_token({'sub': str(user.id)})
         response.set_cookie('access_token', access_token, httponly=True)
-        return access_token
+        return templates.TemplateResponse(request=request,
+                                          name="google.html")
 
     created_user = await UserDAO.add(email = user_data.email,
                                      google_access_token = user_data.access_token)
