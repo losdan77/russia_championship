@@ -10,42 +10,46 @@
           <div class="tabs">
             <div class="tab" id="name-city">
               <img src="..//assets/marker.png">
-              <div class="text-tab">Санкт-Петербург</div>
+              <div class="text-tab">{{ city }}</div>
+            </div>
+            <div class="tab" id="name-city">
+              <img src="..//assets/marker.png">
+              <div class="text-tab">{{birthday_date}}</div>
             </div>
   
             <div class="tab" id="name-status">
-              <div class="text-tab">Физ.лицо</div>
+              <div class="text-tab" v-if="trainer">Тренер</div>
+              <div class="text-tab" v-if="!trainer">Спортсмен</div>
             </div>
-  
+
           </div>
         </div>
         <div class="content-line" id="username">
-          <div class="text-username">Иванов Иван</div>
+          <div class="text-username">{{ fio }}</div>
         </div>
         <div class="content-line" id="feedback">
           <div class="tabs">
             <div class="tab" id="feedback-tab">
               <img src="..//assets/phone.png">
-              <div class="text-tab">7-(953)-291-76-79</div>
+              <div class="text-tab" >{{ phone }}</div>
+
             </div>
             <div class="tab" id="feedback-tab">
               <img src="..//assets/mail.png">
-              <div class="text-tab">zavatsk222222222iy_13@mail.ru</div>
+              <div class="text-tab">{{ email }}</div>
             </div>
           </div>
         </div>
         <div class="content-line" id="decription">
           <div class="left-content">
             <div class="text-description">
-              Я черный парнишка, в трусах еловая шишка: большая прибольшая. Кто сказал что я черный, я просто шоколадный. Бубылда яичная. Предоставляю свои услуги для дам 65+. 
+              {{ description }}
               
             </div>
           </div>
           <div class="right-content">
             <div id="tabs-description">
-            <div class="tab" id="description-tab">
-              <div class="text-tab">Отзывы</div>
-            </div>
+
             <div class="tab" id="edit-tab" @click="goTOChangeProfile">
               <img src="..//assets/profile.png">
               <div class="text-tab" >Редактировать профиль</div>
@@ -58,16 +62,17 @@
   </template>
   
   <script>
-
+  import axios from 'axios';
   export default {
     data(){
       return {
         trainer : false,
-        fio : '',
-        Email : '',
-        description : '',
-        phone : '',
-        city : ''
+        fio : 'Ваши данные пока что не указаны',
+        email : '',
+        description : 'Добавьте описание к своему профилю, свои достижения и список наград)',
+        phone : 'Телефон е привязан к аккаунту',
+        city : 'Ваш город не указан',
+        birthday_date : 'укажите дату рождения'
 
       }
     },
@@ -78,12 +83,27 @@
     },
     async mounted(){
       const user = await axios.get('/api/user/profile/me')
-      this.trainer = user.trainer,
-      this.description = user.description,
-      this.Email = user.email,
-      this.phone = user.phone
-      this.city = user.city,
-      this.fio = user.fio
+      console.log(user);
+      if (user.data.User.birthday_date !==null) {//about
+        this.birthday_date = user.User.data.birthday_date
+      }
+      if (user.data.User.about !==null) {//about
+        this.description = user.User.data.about
+      }
+      if (user.data.User.phone_number !==null) {//phone
+        this.phone = user.data.User.phone_number
+      }
+      if (user.data.User.city.city_name !==null) {//city
+        this.city = user.data.User.city.city_name
+      }
+      if (user.data.User.fio !==null) {//fio
+        this.fio = user.data.User.FIO
+      }
+      this.trainer = user.data.User.is_coach,
+      this.email = user.data.User.email
+
+
+      
     }
   }
   

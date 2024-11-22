@@ -145,6 +145,7 @@ import eventBus from '../eventBus';
 
       async openWindowYandex() {
         const url = await axios.get('/api/user/login/yandex')
+        console.log(url.data);
         const newWindow = window.open(url.data, '_blank');
         if (newWindow) {
           newWindow.blur();
