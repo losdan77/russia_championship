@@ -62,6 +62,12 @@
   export default {
     data(){
       return {
+        trainer : false,
+        fio : '',
+        Email : '',
+        description : '',
+        phone : '',
+        city : ''
 
       }
     },
@@ -69,6 +75,15 @@
       goTOChangeProfile(){
         this.$router.push('/profile/change')
       }
+    },
+    async mounted(){
+      const user = await axios.get('/api/user/profile/me')
+      this.trainer = user.trainer,
+      this.description = user.description,
+      this.Email = user.email,
+      this.phone = user.phone
+      this.city = user.city,
+      this.fio = user.fio
     }
   }
   

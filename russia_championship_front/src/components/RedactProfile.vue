@@ -49,27 +49,9 @@
         </div>
         <div class="input-box">
           <label for="email">Почта</label>
-          <input type="email" id="email" v-model="email" placeholder="ivanov.ivan@mail.ru" required />
+          <input type="email" id="email" v-model="email" placeholder="asd" required />
         </div>
       </div>
-
-
-      <div class="line-input" id="down-line">
-        <div class="input-box">
-          <label for="old_password">Актуальный пароль</label>
-          <input type="password" id="city" v-model="old_password" />
-        </div>
-        <div class="input-box">
-          <label for="new_password">Новый пароль</label>
-          <input type="new_password" id="new_password" v-model="new_password" required />
-        </div>
-        <div class="input-box">
-          <label for="verify_new_password">Повторите новый пароль</label>
-          <input type="verify_new_password" id="verify_new_password" v-model="verify_new_password" required />
-        </div>
-      </div>
-
-
       <div class="description-line">
         <div class="text-discription">Редактировать "О себе"</div>
         <div class="line-textarea">
@@ -78,6 +60,10 @@
       </div>
       <div class="btn-line">
         <button id="btn-change" class="btn-change-info" @click="commitChange">Сохранить изменения</button>
+      </div>
+      <br>
+      <div class="btn-line">
+        <button id="btn-change" class="btn-change-info" @click="changePassword">Изменить пароль</button>
       </div>
     </div>
 
@@ -100,54 +86,42 @@ import eventBus from '../eventBus';
         email: 'lossdan@asd',
         aboutMe: '♥',
         image : null,
-        new_password : '',
-        old_password : '',
-        verify_new_password : '',
+        birthday_date : ''
       };
     },
 
     methods: {
+      changePassword(){
+        this.$router.push('/user/changepass')
+      },
       async commitChange(){
-        if (this.new_password !== this.verify_new_password) {
-          eventBus.emit('show-modal', 'Пароли не совпадают');
-          return 0
-        }
-        if (this.new_password === '' ||  this.verify_new_password ===''  ||   this.old_password ===''){
-          eventBus.emit('show-modal', 'Все поля паролей должны быть заполнены');
-          return 0
-        }
-
-
-        const response = await axios.patch('/api/user/change_password',{
-          old_password: this.old_password,
-          new_password: this.new_password,
-          verify_new_password : this.verify_new_password
-        })
+        const response = await axios.post('/api/user/registr', {
+          birthday_date: this.birthday_date,
+          FIO : this.fullName,
+          is_coach : this.trainer,
+          phone_number:this.phone,
+          about : this.aboutMe
+        });
         console.log(response);
-        eventBus.emit('show-modal', 'Пароль изменён');
+        if (!response.data) {
+          eventBus.emit('show-modal', 'Jib,rf');
+          return 0
+        }
+        eventBus.emit('show-modal', 'Вы успешно зарегистрировались');
+        this.$router.push('/auth')
         
-      }
-
-      // updateProfile() {
-      //   console.log("Профиль обновлён", {
-      //     fullName: this.fullName,
-      //     phone: this.phone,
-      //     city: this.city,
-      //     email: this.email,
-      //     aboutMe: this.aboutMe,
-      //   });
-      // },
-      // async submitForm() {
-      //   try {
-      //     const formData = new FormData();
-      //     formData.append('image', this.image);
-      //   } catch (error) {
-      //     console.error('Ошибка при отправке данных:', error.response.data);
-      //   }
-      // },
-      // handleFileUpload(event) {
-      //   this.image = event.target.files[0];
-      // },
+      },
+      async submitForm() {
+        try {
+          const formData = new FormData();
+          formData.append('image', this.image);
+        } catch (error) {
+          console.error('Ошибка при отправке данных:', error.response.data);
+        }
+      },
+      handleFileUpload(event) {
+        this.image = event.target.files[0];
+      },
     }
   };
   </script>
@@ -615,169 +589,5 @@ import eventBus from '../eventBus';
      }
 
   }
-
-  /* .profile-page {
-    max-width: 600px; 
-    margin: 0 auto; 
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px; 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .profile-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .profile-picture {
-    border-radius: 50%;
-    overflow: hidden;
-    width: 100px;
-    height: 100px;
-    margin-right: 20px;
-  }
-  
-  .profile-picture img {
-    width: 100%;
-    height: auto;
-  }
-  
-  .user-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .user-info h2 {
-    margin: 0;
-    color: #333;
-  }
-  
-  .phone {
-    font-size: 12px;
-    color: #666;
-  }
-  
-  .rating {
-    margin-top: 5px;
-  }
-  
-  .edit-info,
-  .about-me {
-    background-color: white;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-  }
-  
-  .form-row {
-    display: flex;
-    justify-content: space-between; 
-    flex-wrap: wrap; 
-    gap: 15px; 
-  }
-  
-  .form-group {
-    flex: 1; 
-    min-width: 200px;
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-  
-  .form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box; 
-}
-  
-  .save-button {
-    padding: 10px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .save-button:hover {
-    background-color: #555;
-  }
-  
-  .about-me {
-    margin-top: 20px;
-  }
-  
-  .about-me textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    resize: none;
-  }
-  
-  .change-button {
-    padding: 10px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .change-button:hover {
-    background-color: #0056b3;
-  }
-  
-
-  @media (max-width: 600px) {
-    .form-row {
-      flex-direction: column; 
-    }
-    .form-group {
-      min-width: 100%; 
-    }
-  }
-  .reviews {
-  background-color: white;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.review {
-  border-bottom: 1px solid #ddd;
- 
-}
-
-.review:last-child {
-  border-bottom: none; 
-}
-
-.review-rating {
-  font-weight: bold;
-}
-
-.review-message {
-  margin: 5px 0;
-}
-
-.review-author {
-  font-size: 12px;
-  color: #666;
-  text-align: right;
-}
-.image-redactor{
-  display: flex;
-  flex-direction: column;
-} */
   </style>
   

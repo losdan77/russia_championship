@@ -1,6 +1,7 @@
 <template>
     <div class="window-restoring-access">
         <div class="left-side">
+            <div class="btn-sign-in" @click="goToProfile">Назад</div>
             <div class="logo-line">
                 <img src="../assets/yandex.png"/>
             </div>
@@ -39,6 +40,7 @@
 </template>
 
 <script>
+import eventBus from '../eventBus';
 import axios from 'axios';
 export default {
     data() {
@@ -52,17 +54,34 @@ export default {
         Authorization() {
             this.isAuthorized = true;
         },
+        goToProfile(){
+            this.$router.push('/profile')
+        },
         async ChangePass() {
             try {
+                if (this.new_password !== this.verify_new_password) {
+                    eventBus.emit('show-modal', 'Пароли не совпадают');
+                    return 0
+                }
+                    if (this.new_password === '' ||  this.verify_new_password ===''  ||   this.old_password ===''){
+                    eventBus.emit('show-modal', 'Все поля паролей должны быть заполнены');
+                return 0
+                }
+
                 const response = await axios.patch('/api/user/change_password',{
-                new_password : this.new_password,
-                old_password: this.old_password,
-                verify_new_password : this.verify_new_password
-            })
-            console.log(response);
+                    new_password : this.new_password,
+                    old_password: this.old_password,
+                    verify_new_password : this.verify_new_password
+                })
+                if (response.status === 200) {
+                    eventBus.emit('show-modal', 'Пароль изменён'); 
+                }
+                // if (response.status === 200) {
+                //     eventBus.emit('show-modal', 'Пароль изменён'); 
+                // }
             
             } catch (error) {
-                alert('Ошибка при изменении пароля')
+                eventBus.emit('show-modal', 'Пароль не изменен, попробуйте позже');
             }
 
         }

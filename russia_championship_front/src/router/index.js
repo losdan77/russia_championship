@@ -18,6 +18,7 @@ const routes = [
   { path: '/info', component: MainPage},
   { path: '/user/restoring', component: RestoringPage},
   { path: '/user/changepass', component: ChangePassword},
+  
 
 ];
 
