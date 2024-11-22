@@ -157,8 +157,10 @@ async def auth_google(code: str, response: Response, request: Request):
     if user:
         access_token = create_access_token({'sub': str(user.id)})
         response.set_cookie('access_token', access_token, httponly=True)
-        return templates.TemplateResponse(request=request,
-                                          name="google.html")
+        # return templates.TemplateResponse(request=request,
+        #                                   response=response,
+        #                                   name="google.html")
+        return "succesful"
 
     created_user = await UserDAO.add(email = user_data.email,
                                      google_access_token = user_data.access_token)

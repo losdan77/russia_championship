@@ -11,7 +11,7 @@ export default defineConfig({
     host : true,
     proxy: {
       '/api': {
-        target: "http://172.20.10.3:8000" || process.env.URL, // Добавлен http://
+        target: process.env.URL, // Добавлен http://
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''),
       },

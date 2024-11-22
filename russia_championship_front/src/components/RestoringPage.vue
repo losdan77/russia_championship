@@ -51,11 +51,11 @@
             <div class="empty-line"></div>
             <div class="input-line">
                 <label for="email">Новый пароль</label>
-                <input type="password" id="password" v-model="password" required />
+                <input type="password" class="password" v-model="password" required />
             </div>
             <div class="input-line">
                 <label for="email">Повторите новый пароль</label>
-                <input type="password" id="password" v-model="verify_password" required />
+                <input type="password" class="password" v-model="verify_password" required />
             </div>
             <div class="btn-line">
                 <div class="btn-sign-in" @click="SubmitRestoring">Восстановить</div>
@@ -102,19 +102,20 @@ export default {
             } catch (error) {
                 eventBus.emit('show-modal', 'Неверный проверочный код ');
             }
-            }
-
-        },
-        async SubmitRestoring(){
+            },
+            async SubmitRestoring() {
+            console.log('sdfsdf');
+            
             try {
                 const response = await axios.post(`/api/user/create_new_password`,{
                     email: this.email,
                     new_password: this.password,
                     verify_new_password: this.verify_password
-                })
+                },{timeout:2000})
+            console.log(response)
             if (response.status === 200) {
                 eventBus.emit('show-modal', `Доступ к аккаунту ${this.email} восстановлен`);
-                this.$router.push('/auth')
+                this.$router.push('/auth');
                 }
             } catch (error) {
                 eventBus.emit('show-modal', 'Приносим извенения, повторите попытку позже');  
@@ -122,6 +123,9 @@ export default {
 
             
         }
+
+        },
+
     }
 
 </script>
