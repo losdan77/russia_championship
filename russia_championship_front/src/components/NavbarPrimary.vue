@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="navbar-logo">
-      <img src="..//assets/yandex.png" alt="Logo" class="logo" />
+      <img src="..//assets/logo.png" alt="Logo" class="logo" />
     </div>
 
     <div class="navbar-buttons desktop-buttons">
@@ -21,14 +21,14 @@
     </div>
 
     <div v-if="isMenuOpen" class="mobile-menu">
-      <button class="navbar-button" id="btn-menu" @click="GoToReg">Войти</button>
-      <button class="navbar-button" id="btn-menu" @click="Authorization()">Зарегистрироваться</button>
+      <button class="navbar-button" id="btn-menu" @click="Authorization">Войти</button>
+      <button class="navbar-button" id="btn-menu" @click="GoToReg">Зарегистрироваться</button>
       <button class="navbar-button" id="btn-menu-telegram" @click="closeMenu">Телеграм</button>
-      <div>
+      <!-- <div>
         <button class="navbar-button" id="btn-menu" @click="Authorization">Войти</button>
         <button class="navbar-button" id="btn-menu" @click="GoToReg">Зарегистрироваться</button>
         <button class="navbar-button" id="btn-menu-telegram" @click="closeMenu">Телеграм</button>
-      </div>
+      </div> -->
       <!-- <div>
         <button class="navbar-button" id="btn-menu-telegram" @click="Authorization">Профиль</button>
         <button class="navbar-button" id="btn-menu" @click="GoToReg">Выйти</button>
@@ -97,24 +97,24 @@ export default {
   cursor: pointer;
   padding: 0 2vw;
   height:6vh;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-family:Golos-Text;
   transition: all .4s ease;
 }
 
 #btn-input {
-  background-color: #118de5;
+  background-color: rgb(49,68,104);
   color:#ffffff;
   font-weight: 600;
 }
 
 #btn-input:hover {
-  background-color: #0d79c6;
+  background-color: rgb(37, 51, 77);
 }
 
 #btn-reg {
   background-color: #fff;
   color:#323232;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:Golos-Text;
   font-weight: 600;
 }
 

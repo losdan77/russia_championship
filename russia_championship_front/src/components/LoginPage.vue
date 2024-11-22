@@ -119,7 +119,6 @@ import eventBus from '../eventBus';
           return this.$router.push('/profile')
         }
         } catch (error) {
-          console.log(error.response.status);
           
           if (error.response.status === 401) {
           eventBus.emit('show-modal', 'Неправильный Email или пароль');

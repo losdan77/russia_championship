@@ -4,11 +4,11 @@
     <section class="left-section">
       <div class="section" id="section-1">
         <div class="content-section-1">
-          <div class="logo-img">
+          <!-- <div class="logo-img">
               <div class="profile-picture">
                 <img :src="image_url" class="main-image" v-if="image_url">
               </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </section>
@@ -66,7 +66,7 @@
         </div>
 
 
-        <div class="wrapper-input" id="photo-wrapper">
+        <!-- <div class="wrapper-input" id="photo-wrapper">
           <div class="image-redactor">
             <div class="text-image-redactor">Фото профиля (необязательно)</div>
             <div class="top-line-photo">
@@ -74,10 +74,10 @@
             <label class="file-input-label" for="file-upload">Загрузить фото</label>
             <input type="file" id="file-upload" class="file-input" name="image" @change="handleFileUpload" v-if="!image">
           </div>
-            <!-- <button v-if="image" @click="AddPhoto" class="save-button">Добавить</button> -->
+            <button v-if="image" @click="AddPhoto" class="save-button">Добавить</button>
             </div>
           </div>
-          </div>
+          </div> -->
         <div type="submit" class="register-button" @click="Register()">Зарегистрироваться</div>
         <p @click="GoToLogin()" class="GoToLogin">У меня уже есть аккаунт</p>
         <div class="logo-pic">

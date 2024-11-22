@@ -18,7 +18,7 @@
         </div>
         <div class="image-redactor">
           <label class="file-input-label" for="file-upload" v-if="!image">Изменить фото</label>
-          <label class="file-input-label" for="file-upload" v-if="image">Сохранить фото</label>
+          <label class="file-input-label" @click="uploadPhoto" v-if="image">Сохранить фото</label>
           <input 
             type="file" 
             id="file-upload" 
@@ -163,23 +163,20 @@ import eventBus from '../eventBus';
           this.image_url = event.target.result;
         };
         reader.readAsDataURL(file);
-        this.uploadPhoto();
       },
 
       async uploadPhoto() {
         try {
             const formData = new FormData();
             formData.append('image', this.image);
-
             // const response = await axios.post('https://example.com/api/profile/photo', formData, {
             //   headers: {
             //     'Content-Type': 'multipart/form-data',
             //   },
             // });
-
-            console.log('Фото успешно загружено:', response.data);
+            eventBus.emit('show-modal', 'Фото успешно загружено');
           } catch (error) {
-            console.error('Ошибка загрузки фото:', error.response?.data || error.message);
+            eventBus.emit('show-modal', 'Ошибка при загрузке фотографии');
           }
         },
       
@@ -187,7 +184,6 @@ import eventBus from '../eventBus';
     async mounted(){
       try {
         const user = await axios.get('/api/user/profile/me')
-      console.log(user);
       if (user.data.User.birthday_date !==null) {//about
         this.birthday_date = user.data.User.birthday_date
       }
