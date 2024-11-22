@@ -24,7 +24,7 @@
 
     <div v-if="isMenuOpen" class="mobile-menu">
       <button class="navbar-button" id="btn-menu" @click="closeMenu">Войти</button>
-      <button class="navbar-button" id="btn-menu" @click="closeMenu">Зарегистрироваться</button>
+      <button class="navbar-button" id="btn-menu" @click="closeMenu">Выйти</button>
       <button class="navbar-button" id="btn-menu-telegram" @click="closeMenu">Телеграм</button>
     </div>
   </nav>
@@ -87,9 +87,9 @@ export default {
   padding:0 15vw;
   background-color: #ffffff;
   color: white;
-  -webkit-box-shadow: 0px 31px 16px -12px rgba(34, 60, 80, 0.2);
-  -moz-box-shadow: 0px 31px 16px -12px rgba(34, 60, 80, 0.2);
-  box-shadow: 0px 31px 16px -12px rgba(34, 60, 80, 0.2);
+  -webkit-box-shadow: 0px 10px 8px -4px rgba(34, 60, 80, 0.48);
+-moz-box-shadow: 0px 10px 8px -4px rgba(34, 60, 80, 0.48);
+box-shadow: 0px 10px 8px -4px rgba(34, 60, 80, 0.48);
 }
 
 
@@ -281,6 +281,25 @@ export default {
   .navbar{
     padding-top:1vw;
     padding-bottom:1vw;
+  }
+  .navbar {
+    display:flex;
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 580px) {
+  .navbar {
+    display:flex;
+    flex-direction: row;
+    width:120%;
+  }
+}
+@media (max-width: 450px) {
+  .navbar {
+    display:flex;
+    flex-direction: row;
+    width:140%;
   }
 }
 </style>

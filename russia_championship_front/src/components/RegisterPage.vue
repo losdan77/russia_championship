@@ -82,10 +82,16 @@
           <input type="password" id="confirmPassword" v-model="confirmPassword" required />
         </div>
         <div class="wrapper-input" id="photo-wrapper">
-        <div class="image-redactor">
-              <input type="file" id="fileupload" name="image" @change="handleFileUpload" v-if="!image">
-              <button v-if="image" @click="AddPhoto" class="save-button">Добавить</button>
+          <div class="image-redactor">
+            <div class="text-image-redactor">Фото профиля:</div>
+            <div class="top-line-photo">
+            <div class="">
+            <label class="file-input-label" for="file-upload">Загрузить фото</label>
+            <input type="file" id="file-upload" class="file-input" name="image" @change="handleFileUpload" v-if="!image">
+          </div>
+            <button v-if="image" @click="AddPhoto" class="save-button">Добавить</button>
             </div>
+          </div>
           </div>
         <div type="submit" class="register-button" @click="Register()">Зарегистрироваться</div>
         <p @click="GoToLogin()" class="GoToLogin">У меня уже есть аккаунт</p>
@@ -417,9 +423,11 @@ p:hover {
   background-color: #333;
   color:#fff;
   border:0;
-  border-radius: 1vh;
-  padding:.5vh 2vh;
+  display:flex;
+  justify-content: center;
+  align-items: center;
   cursor:pointer;
+  font-family: Golos-Text-Semibold;
 } 
 .save-button:hover {
   background-color: #3e3e3e;
@@ -455,16 +463,15 @@ p:hover {
     row-gap: 20px;
   }
   .window {
-    width:80%;
-  
-  }
+    width:100%;
+    height:100%;
+  }s
   .register-button {
     margin-top:2vw;
   }
   .btn-go-register .text-btn {
     font-size:1.5vh;
   }
-
   .input-wrapper input {
     font-size:15px;
   }
@@ -505,6 +512,9 @@ p:hover {
   }
   p {
     font-size:1.7vh;
+  }
+  .save-button {
+    font-size:1.5vh;
   }
 }
 
@@ -602,5 +612,48 @@ p:hover {
   padding:1vh 0;
 }
 
+.file-input-container {
+    overflow: hidden;
+    position: relative;
+    
+  }
+  
+  .file-input-label {
+    background: #f0f0f0;
+    padding: 1vh 3vh;
+    cursor: pointer;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #d3d3d3;
+    width:10vw;
+  }
+  .image-redactor {
+    display:flex;
+    align-items: start;
+    flex-direction: column;
+    gap:.5vw;
+    width:100%;
+  }
+  .file-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+  }
+  .text-image-redactor {
+    font-size:1.4vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-family:Golos-Text;
+  }
+
+  .top-line-photo {
+    display:flex;
+    flex-direction: row;
+  }
   </style>
   

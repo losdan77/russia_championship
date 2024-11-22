@@ -6,7 +6,7 @@
           <div class="logo-img">
             <img src="../assets/yandex.png" @click="goToHome"/>
           </div>
-          <div class="btn-reg" @click="GoToReg()">Сосать хуй</div>
+          
         </div>
       </div>
     </section>
@@ -27,30 +27,36 @@
           </div>
         </form>
         </div>
-        <div class="btn-wrapper">
+        <div class="box-password-recovery">
           <div class="btn-password-recovery" @click="GoToRestoring">Забыли пароль?</div>
-          <div class="btn-sign-in" @click="Authorization()">Войти</div>
         </div>
-        <div class="yandex-wrapper">
-          <div class="btn-yandex">
-            <div class="icon-btn">
-              <img src="../assets/yandex.png">
-            </div>
-            <div class="text-btn"  
-            @click="openWindow"
-            >
-            Войти через Гугл
-            </div>
-          </div>
-            <div class="btn-yandex">
-            <div class="icon-btn">
-              <img src="../assets/yandex.png">
+        <div class="btn-wrapper">
+          <div class="btn-reg" @click="GoToReg()">ЕЩЕ НЕ ЗАРЕГИСТРИРОВАНЫ?</div>
+          <div class="btn-sign-in" @click="Authorization()">ВОЙТИ</div>
+        </div>
+        <div class="sign-in-botton-line">
+          <div class="text-sign-in-bottom">Вход через:</div> 
+          <div class="fast-auth-box">
+            <div class="btn-google">
+              <div class="icon-btn">
+                <img src="../assets/google.png">
               </div>
               <div class="text-btn"  
-              @click="openWindowYandex"
+              @click="openWindow"
               >
-              Войти через Яндекс
+              Войти через Google
               </div>
+            </div>
+              <div class="btn-yandex">
+              <div class="icon-btn">
+                <img src="../assets/yandex.png">
+                </div>
+                <div class="text-btn"  
+                @click="openWindowYandex"
+                >
+                Войти через Яндекс
+                </div>
+            </div>
           </div>
           <div class="btn-go-register" @click="GoToReg">
             <div class="icon-btn">
@@ -171,6 +177,15 @@ import eventBus from '../eventBus';
   </script>
   
   <style scoped>
+@font-face {
+    font-family: Golos-Text-Semibold;
+    src: url('../assets/fonts/Golos_Text/static/GolosText-SemiBold.ttf');
+  }
+
+@font-face {
+    font-family: Golos-Text;
+    src: url('../assets/fonts/Golos_Text/static/GolosText-Regular.ttf');
+  }
 
   .window {
   display: flex;
@@ -238,29 +253,7 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   width:3vw;
   height:3vw;
 }
-.btn-reg {
-  position: absolute;
-  width:15vw;
-  height:4vh;
-  top:29.5vh;
-  bottom:0;
-  left:0;
-  right:0;
-  margin:auto;
-  text-align: center;
-  align-content: center;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: 700;
-  border-radius: 2vh;
-  color:#fff;
-  background-color: #9db5b4a6;
-}
 
-.btn-reg:hover {
-  background-color: #73808597;
-  cursor:pointer;
-  transition: all .4s ease;
-}
 
 .upper-wrapper {
   padding:3vh 0 0 3vh;
@@ -317,25 +310,51 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 1vh 3vh;
+  padding:1vh 1.5vw;
 }
 
 .btn-sign-in {
   display: flex;
   background-color: #333;
-  font-size:2vh;
+  font-size:1.6vh;
   align-items: center;
   justify-content: center;
-  padding: .5vh 5vh;
-  height:4vh;
-  border-radius: 3vh;
-  font-family: Arial, Helvetica, sans-serif;
+  height:5vh;
+  width:35%;
+  border-radius: 1vw;
+  font-family: Golos-Text-Semibold;
   color:#fff;
 }
 
 .btn-sign-in:hover {
-  background-color: #bfbfbf;
+  background-color: #696969;
   cursor:pointer;
+  transition: all .4s ease;
+}
+
+.btn-reg {
+  height:4vh;
+  text-align: center;
+  align-content: center;
+  font-family: Golos-Text;
+  font-weight: 300;
+  font-size:1.4vh;
+  border-radius: 1vw;
+  color:#a3a3a3;
+  height:5vh;
+  width:60%;
+  border:1px solid #ececec;
+}
+
+.btn-reg:hover {
+  background-color: #ff9d00;
+  color:#fff;
+  cursor:pointer;
+  transition: all .4s ease;
+}
+
+.box-password-recovery {
+  padding: .5vh 1.5vw;
 }
 
 .btn-password-recovery {
@@ -345,6 +364,7 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   justify-content: left;
   align-items: center;
   color:#8d8d8d;
+  width:50%;
 }
 
 .btn-password-recovery:hover {
@@ -352,19 +372,18 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   cursor:pointer;
 }
 
-.yandex-wrapper {
-  padding:5vh 3vh 1vh 3vh;
-}
-
 .btn-yandex {
   display:flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
   gap: 2vh;
-  border-radius: 2vh;
-  padding:.7vh 3vh .2vh 1vh;
-  border:2vh;
+  padding:.5vh 1vw;
+  width:35%;
   color:#fff;
+  font-family:Golos-Text;
   background-color: rgb(255,47,47);
+  border-radius: 2vh;
 }
 
 .btn-yandex:hover {
@@ -372,12 +391,30 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   cursor:pointer;
 }
 
+.btn-google {
+  display:flex;
+  flex-direction: row;
+  gap: 2vh;
+  padding:.5vh 1vw;
+  width:35%;
+  border-radius: 2vh;
+  color:#191919;
+  background-color: rgb(255, 255, 255);
+  border:1px solid #ececec;
+  font-family:Golos-Text;
+}
+
+.btn-google:hover {
+  background-color: rgb(232, 232, 232);
+  cursor:pointer;
+}
+
 .text-btn {
   display: flex;
   align-items:center;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:Golos-Text;
   padding:0;
-  font-size: 1.8vh;
+  font-size:1.4vh;
   margin:auto;
 }
 
@@ -402,6 +439,9 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
 /* MEDIA */
 
 @media (max-width: 500px) {
+  .box-password-recovery {
+    padding-left:6vw;
+  }
   .left-section {
     display: none;
   }
@@ -413,11 +453,20 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   .btn-wrapper {
     display: flex;
     flex-direction: column;
-    row-gap: 20px;
+    row-gap: 10px;
+    justify-content: center;
+    align-items: center;
   }
   .window {
-    width:80%;
+    width:90%;
     
+  }
+  .btn-reg {
+    width:90%;
+  }
+
+  .btn-sign-in {
+    width:90%;
   }
 
   .btn-go-register .text-btn {
@@ -451,13 +500,11 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   .right-section {
     width: 70%;
   }
-
-  .btn-reg {
-    display: none;
+  .btn-yandex {
+    width:39%;
   }
-
-  .btn-go-register {
-    display:flex;
+  .btn-google {
+    width:39%;
   }
   .btn-go-register .text-btn {
     font-size:1.5vh;
@@ -478,9 +525,34 @@ box-shadow: 0px 0px 49px 0px rgba(34, 60, 80, 0.2);
   .btn-go-register .text-btn {
     font-size:1.5vh;
   }
-
+  .btn-yandex {
+    width:42%;
+  }
+  .btn-google {
+    width:42%;
+  }
 }
 
+.fast-auth-box {
+  width:100%;
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap:.5vw;
+}
+.text-sign-in-bottom {
+  padding-left:1.5vw;
+  font-family:Golos-Text;
+  font-size: 1.5vh;
+}
 
+.sign-in-botton-line {
+  padding-top:3vh;
+  display:flex;
+  flex-direction: column;
+  gap:.5vw;
+  width:100%;
+}
   </style>
   
