@@ -1,70 +1,88 @@
 <template>
   <div class="window-change-profile">
     <div class="image-line">
-
+      <img src="../assets/logo.png">
+      <div class="line-btn-up">
+      <div class="btn-mainpage" @click="this.$router.push('/info')">
+        На главную
+      </div>
+      <div class="btn-profile">
+        <img src="../assets/profile-icon.png" @click="this.$router.push('/profile')">
+      </div>
     </div>
-
+    </div>
     <div class="main-info-line">
       <div class="left-side">
-          <div class="profile-picture">
-            <img src="https://via.placeholder.com/100" alt="Profile Picture" class="main-image">
-          </div>
-          <div class="image-redactor">
-            <input type="file" id="fileupload" name="image" @change="handleFileUpload" v-if="!image">
-            <button v-if="image">Добавить</button>
-          </div>
+        <div class="profile-picture">
+          <img :src="image_url" class="main-image" alt="Profile Picture">
+        </div>
+        <div class="image-redactor">
+          <label class="file-input-label" for="file-upload" v-if="!image">Изменить фото</label>
+          <label class="file-input-label" for="file-upload" v-if="image">Сохранить фото</label>
+          <input 
+            type="file" 
+            id="file-upload" 
+            class="file-input" 
+            name="image" 
+            @change="handleFileUpload"
+          >
+        </div>
       </div>
       <div class="right-side">
-        <div class="value-name-now" id="text-info">
-          {{ fullName }}
-        </div>
-        <div class="value-number-now" id="meta-text-info" >
-          Местоположение: {{ city }}
-        </div>
-        <div class="value-number-now" id="meta-text-info">
-          Моб.телефон: {{ phone }}
-        </div>
-        <div class="value-mail-now" id="meta-text-info">
-          Почт.адрес: {{ email }}
+        <div class="main-info">
+          <div class="value-name-now" id="text-info">
+            {{ new_fio }}
+          </div>
+          <div class="value-number-now" id="meta-text-info" >
+            Местоположение: {{ city }}
+          </div>
+          <div class="value-number-now" id="meta-text-info">
+            Моб.телефон: {{ new_phone }}
+          </div>
+          <div class="value-mail-now" id="meta-text-info">
+            Почт.адрес: {{ email }}
+          </div>
         </div>
       </div>
     </div>
 
     <div class="change-info-line">
       <div class="line-text">Редактировать данные</div>
-      <div class="line-input" id="up-line">
         <div class="input-box">
-          <label for="fullName">ФИО</label>
-          <input type="text" id="fullName" v-model="fullName" placeholder="Иванов Иван" required />
+          <label for="fio">ФИО</label>
+          <input type="text" id="fio" v-model="fio" placeholder="Введите ФИО" required />
+        </div>
+        <div class="input-box">
+          <label for="fullName">Дата рождения</label>
+          <input type="text" id="fullName" v-model="birthday_date" placeholder="Введите дату рождения" required />
         </div>
         <div class="input-box">
           <label for="phone">Телефон</label>
-          <input type="tel" id="phone" v-model="phone"  placeholder="+7(999)-999-99-99" required />
+          <input type="tel" id="phone" v-model="phone"  placeholder="Введите свой номер телефона" required />
         </div>
-      </div>
-      <div class="line-input" id="down-line">
         <div class="input-box">
           <label for="city">Город</label>
           <input type="text" id="city" v-model="city"  placeholder="Москва" />
         </div>
-        <div class="input-box">
+        <!-- <div class="input-box">
           <label for="email">Почта</label>
           <input type="email" id="email" v-model="email" placeholder="asd" required />
+        </div> -->
+        <div class="input-box">
+          <label for="line-textarea">О себе</label>
+          <div class="line-textarea">
+            <textarea v-model="description" rows="5" placeholder="Напишите о себе..."></textarea>
         </div>
-      </div>
-      <div class="description-line">
-        <div class="text-discription">Редактировать "О себе"</div>
-        <div class="line-textarea">
-          <textarea v-model="aboutMe" rows="5" placeholder="Напишите о себе..."></textarea>
         </div>
-      </div>
+      <div class="btns-line">
       <div class="btn-line">
         <button id="btn-change" class="btn-change-info" @click="commitChange">Сохранить изменения</button>
       </div>
       <br>
       <div class="btn-line">
-        <button id="btn-change" class="btn-change-info" @click="changePassword">Изменить пароль</button>
+        <button id="btn-change" class="btn-change-password" @click="changePassword">Изменить пароль</button>
       </div>
+    </div>
     </div>
 
 
@@ -79,36 +97,50 @@ import eventBus from '../eventBus';
   export default {
     data() {
       return {
-        fullName: 'Иван Иванов',
-        phone: '+7 (999) 999-99-99',
-        rating: 4.5,
-        city: 'Kaspersk',
-        email: 'lossdan@asd',
-        aboutMe: '♥',
+        phone: 0,
         image : null,
-        birthday_date : ''
+        trainer : false,
+        fio : '',
+        email : '',
+        description : '',
+        city : '',
+        birthday_date : '',
+        new_fio : '',
+        new_phone : 0,
+        image_url : 'https://storage.yandexcloud.net/step2002sharp/default.jpg'
       };
     },
 
     methods: {
+
+      PhotoChanged(event){
+        this.image = event.target.files[0];
+        if (this.image) {
+          this.image_url = URL.createObjectURL(this.image); // Предпросмотр изображения
+        }
+      },
       changePassword(){
         this.$router.push('/user/changepass')
       },
       async commitChange(){
-        const response = await axios.post('/api/user/registr', {
+        console.log(typeof this.phone);
+        
+        const response = await axios.patch('/api/user/change/profile', {
           birthday_date: this.birthday_date,
-          FIO : this.fullName,
+          FIO : this.fio,
           is_coach : this.trainer,
           phone_number:this.phone,
-          about : this.aboutMe
+          about : this.description
         });
+        
         console.log(response);
         if (!response.data) {
-          eventBus.emit('show-modal', 'Jib,rf');
+          eventBus.emit('show-modal', 'Ошибка при сохранении данных, повторите попытку позже');
           return 0
         }
-        eventBus.emit('show-modal', 'Вы успешно зарегистрировались');
-        this.$router.push('/auth')
+        this.new_fio = this.fio
+        this.new_phone= this.phone
+        eventBus.emit('show-modal', 'Данные успешно изменены');
         
       },
       async submitForm() {
@@ -120,8 +152,66 @@ import eventBus from '../eventBus';
         }
       },
       handleFileUpload(event) {
-        this.image = event.target.files[0];
+        const file = event.target.files[0]; 
+        if (!file) return;
+
+        this.image = file;
+
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          this.image_url = event.target.result;
+        };
+        reader.readAsDataURL(file);
+        this.uploadPhoto();
       },
+
+      async uploadPhoto() {
+        try {
+            const formData = new FormData();
+            formData.append('image', this.image);
+
+            // const response = await axios.post('https://example.com/api/profile/photo', formData, {
+            //   headers: {
+            //     'Content-Type': 'multipart/form-data',
+            //   },
+            // });
+
+            console.log('Фото успешно загружено:', response.data);
+          } catch (error) {
+            console.error('Ошибка загрузки фото:', error.response?.data || error.message);
+          }
+        },
+      
+    },
+    async mounted(){
+      try {
+        const user = await axios.get('/api/user/profile/me')
+      console.log(user);
+      if (user.data.User.birthday_date !==null) {//about
+        this.birthday_date = user.data.User.birthday_date
+      }
+      if (user.data.User.about !==null) {//about
+        this.description = user.data.User.about
+      }
+      if (user.data.User.phone_number !==null) {//phone
+        this.phone = user.data.User.phone_number
+        this.new_phone = this.phone
+      }
+      if (user.data.User.city.city_name !==null) {//city
+        this.city = user.data.User.city.city_name
+      }
+      if (user.data.User.fio !==null) {//fio
+        this.fio = user.data.User.FIO
+        this.new_fio = this.fio
+      }
+      this.trainer = user.data.User.is_coach,
+      this.email = user.data.User.email
+      } catch (error) {
+        console.log(error);
+        eventBus.emit('show-modal', 'Авторизуйтесь и поворить попытку');
+      }
+      
     }
   };
   </script>
@@ -130,14 +220,8 @@ import eventBus from '../eventBus';
   <style scoped>
 
   .window-change-profile {
-    position:absolute;
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
-    margin:auto;
     background-color: rgb(255, 255, 255);
-    height:80%;
+    height:130vh;
     width:50%;
     -webkit-box-shadow: 0px 0px 35px 6px rgba(34, 60, 80, 0.2);
     -moz-box-shadow: 0px 0px 35px 6px rgba(34, 60, 80, 0.2);
@@ -148,10 +232,18 @@ import eventBus from '../eventBus';
 
   .image-line {
     height:10%;
-    background: url('..//assets/fon.PNG');
+    background-color: rgb(49,68,104);
     background-repeat: no-repeat;
     width:100%;
     background-size: cover;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .image-line img {
+    width:60px;
+    margin-left:2vw;
   }
 
   .main-info-line {
@@ -177,71 +269,70 @@ import eventBus from '../eventBus';
   }
 
   .profile-picture img {
-    width:150px;
-    height:150px;
+    width:250px;
+    height:250px;
     border-radius: 100%;
     overflow: hidden;
   }
 
-  .image-redactor {
-    height:10%;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-  }
 
   .main-info-line .right-side {
     height:100%;
     width:60%;
     display:flex;
     flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    padding-top:8vh;
+  }
+
+  .main-info {
+    display:flex;
+    flex-direction: column;
+    gap:1vh;
   }
 
   .value-name-now {
-    height:55%;
     width:90%;
     display:flex;
     justify-content: left;
     align-items: center;
     font-size:35px;
     font-weight: 600;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     overflow: hidden;
     white-space:nowrap;
   }
 
   .value-city-now {
-    height:15%;
     width:90%;
     display:flex;
     justify-content: left;
     align-items: center;
     font-size:17px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     overflow: hidden;
     white-space:nowrap;
   }
 
   .value-number-now {
-    height:15%;
     width:90%;
     display:flex;
     justify-content: left;
     align-items: center;
     font-size:17px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     overflow: hidden;
     white-space:nowrap;
   }
 
   .value-mail-now {
-    height:15%;
     width:90%;
     display:flex;
     justify-content: left;
     align-items: center;
     font-size:17px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     overflow: hidden;
     white-space:nowrap;
   }
@@ -249,14 +340,14 @@ import eventBus from '../eventBus';
   .change-info-line {
     width:100%;
     height:35%;
-    
     display:flex;
     flex-direction: column;
+    gap:1.5vh;
   }
   .line-text {
     height:20%;
     font-size: 30px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     padding-left: 7%;
     font-weight: 600;
     display:flex;
@@ -269,49 +360,80 @@ import eventBus from '../eventBus';
     flex-direction: row;
   }
 
-  .line-input .input-box {
-    width:50%;
-    height:100%;
+.input-box {
+    width:100%;
+    height:5vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: left;
-    padding-left: 7%;
+    align-items: center;
+    height:9vh;
   }
 
   .input-box label {
-    width:80%;
     font-size: 17px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #a1a1a1;
+    font-family: Golos-Text;
+    color: #101010;
+    width:20vw;
+    height:2vh;
+    display:flex;
+    justify-content: start;
+    align-items: end;
+    padding:.5vh 0;
   }
   .input-box input {
-    width:80%;
     font-size: 17px;
-    height:50%;
     font-family: Arial, Helvetica, sans-serif;
     border:1px solid #eaeaea;
     background-color: #eaeaea;
     border-radius: .5vh;
     outline:0;
-    padding-left:5%;
+    padding:0 1vh;
+    height:4vh;
+    width:19vw;
   }
 
   .btn-line {
-    width:93%;
-    height:20%;
-    padding-left:7%;
     display:flex;
-    justify-content: start;
-    align-items:end;
+    justify-content: center;
+    align-items: center;
   }
 
   .btn-change-info {
-    height:40px;
-    background-color: rgb(42, 42, 42);
+    width:20vw;
+    height:4vh;
+    font-size:1.7vh;
+    background-color: rgb(49,68,104);
     color:#fff;
     border:none;
-    padding: 0 2%;
+    cursor: pointer;
+    font-family: Golos-Text;
+  }
+
+  .btn-change-password {
+    width:20vw;
+    height:4vh;
+    font-size:1.7vh;
+    background-color: rgb(255, 255, 255);
+    border:1px solid rgb(49,68,104);
+    color:rgb(49,68,104);
+    cursor: pointer;
+    font-family: Golos-Text;
+  }
+
+  .btn-change-info:hover {
+    background-color: rgb(32,44,67);
+  }
+
+  .btn-mainpage {
+    background-color: rgb(255, 255, 255);
+    height:4vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding:0 2vw;
+    font-family: Golos-Text-Semibold;
+    border-radius: 20px; 
     cursor: pointer;
   }
 
@@ -332,18 +454,17 @@ import eventBus from '../eventBus';
   }
 
   .line-textarea {
-    height:50%;
     display:flex;
     justify-content: center;
+    width:20vw;
   }
 
   .line-textarea textarea {
-    width:83%;
-    height:80%;
+    width:100%;
     border:1px solid #eaeaea;
     outline:0;
     background-color: #eaeaea;
-    padding-left:2%;
+    padding:0 .5vw;
   }
 
   .btn-line-1 {
@@ -589,5 +710,86 @@ import eventBus from '../eventBus';
      }
 
   }
+  .file-input-container {
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .file-input-label {
+      background: rgb(49,68,104);
+      padding: 1vh 3vh;
+      cursor: pointer;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Golos-Text;
+      font-size:1.7vh;
+      border: 1px solid #d3d3d3;
+      color:#fff;
+      width:10vw;
+    }
+
+    .file-input-label:hover {
+      background-color: rgb(32,44,67);
+    } 
+
+    .image-redactor {
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap:.5vw;
+      width:100%;
+      height:20%;
+    }
+    .file-input {
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      position: absolute;
+      z-index: -1;
+    }
+    .text-image-redactor {
+      font-size:1.4vh;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      font-family:Golos-Text;
+    }
+  
+    .top-line-photo {
+      display:flex;
+      flex-direction: row;
+    }
+
+    .btns-line {
+      display: flex;
+      flex-direction: column;
+      gap:0;
+      margin-top:2vh;
+    }
+    .line-btn-up {
+      display:flex;
+      flex-direction: row;
+      padding-right:2vw;
+      gap:1vw;
+    }
+
+    .btn-profile {
+      background-color: #fff;
+      border-radius: 50%;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      width:2vw;
+      height:4vh;
+      cursor: pointer;
+    }
+
+    .btn-profile img {
+      width:1.5vw;
+      height:3vh;
+      margin: auto;
+    }
   </style>
   

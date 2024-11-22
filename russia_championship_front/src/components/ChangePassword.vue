@@ -74,11 +74,9 @@ export default {
                     verify_new_password : this.verify_new_password
                 })
                 if (response.status === 200) {
-                    eventBus.emit('show-modal', 'Пароль изменён'); 
+                    eventBus.emit('show-modal', 'Пароль изменён');
+                    this.$router.push('/profile') 
                 }
-                // if (response.status === 200) {
-                //     eventBus.emit('show-modal', 'Пароль изменён'); 
-                // }
             
             } catch (error) {
                 eventBus.emit('show-modal', 'Пароль не изменен, попробуйте позже');

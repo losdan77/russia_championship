@@ -85,10 +85,10 @@
       const user = await axios.get('/api/user/profile/me')
       console.log(user);
       if (user.data.User.birthday_date !==null) {//about
-        this.birthday_date = user.User.data.birthday_date
+        this.birthday_date = user.data.User.birthday_date
       }
       if (user.data.User.about !==null) {//about
-        this.description = user.User.data.about
+        this.description = user.data.User.about
       }
       if (user.data.User.phone_number !==null) {//phone
         this.phone = user.data.User.phone_number

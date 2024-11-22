@@ -1,7 +1,9 @@
 <template>
     <div>
     <NavbarMain/>
-    <RedactProfile/>    
+    <div class="redact-box">
+        <RedactProfile/>
+    </div>    
     </div>
 </template>
 
@@ -22,3 +24,13 @@ export default {
 }
 
 </script>
+
+<style scoped>
+    .redact-box {
+        display:flex;
+        justify-content: center;
+        align-items: start;
+        padding-top:4vh;
+        height:150vh;
+    }
+</style>
