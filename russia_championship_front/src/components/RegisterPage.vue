@@ -36,7 +36,7 @@
         </div>
         <div class="input-wrapper">
           <div class="wrapper-input">
-          <label for="fullName">ФИО*</label>
+          <label for="fullName">ФИО (необязательно)</label>
           <input type="text" id="fullName" v-model="fullName" required />
         </div>
         <div class="line-wrapper">
@@ -44,18 +44,8 @@
           <label for="email">Почта*</label>
           <input type="email" id="email" v-model="email" required />
         </div>
-        <div class="form-row">
-          <div class="wrapper-input" id="nubmer-phone">
-            <label for="phone">Номер телефона*</label>
-            <input type="tel" id="phone" v-model="phone" required />
-          </div>
-          <div class="wrapper-input" id="city-user">
-            <label for="city">Город</label>
-            <input type="text" id="city" v-model="city" />
-          </div>
-        </div>
-          
-  
+
+
         <div class="wrapper-input">
           <label for="password">Пароль*</label>
           <input type="password" id="password" v-model="password" required />
@@ -64,15 +54,27 @@
           <label for="confirm-password">Подтвердите пароль*</label>
           <input type="password" id="confirmPassword" v-model="confirmPassword" required />
         </div>
+        <div class="form-row">
+          <div class="wrapper-input" id="nubmer-phone">
+            <label for="phone">Номер телефона (необязательно)</label>
+            <input type="tel" id="phone" v-model="phone" required />
+          </div>
+          <div class="wrapper-input" id="city-user">
+            <label for="city">Город (необязательно)</label>
+            <input type="text" id="city" v-model="city" />
+          </div>
+        </div>
+
+
         <div class="wrapper-input" id="photo-wrapper">
           <div class="image-redactor">
-            <div class="text-image-redactor">Фото профиля:</div>
+            <div class="text-image-redactor">Фото профиля (необязательно)</div>
             <div class="top-line-photo">
             <div class="">
             <label class="file-input-label" for="file-upload">Загрузить фото</label>
             <input type="file" id="file-upload" class="file-input" name="image" @change="handleFileUpload" v-if="!image">
           </div>
-            <button v-if="image" @click="AddPhoto" class="save-button">Добавить</button>
+            <!-- <button v-if="image" @click="AddPhoto" class="save-button">Добавить</button> -->
             </div>
           </div>
           </div>
@@ -122,58 +124,68 @@ export default {
         this.$router.push('/auth')
       },
       async Register(){
-        //axios запрос для получения формы id пользователя
-        const response = await axios.post('/api/user/registr', {
-          email: this.email,
-          password: this.password,
-          password_verify: this.confirmPassword,
-          is_coach : this.trainer,
-          phone_number:this.phone,
-          photo_url : this.image_url,
-          city : this.city,
-          FIO : this.fullName
-        });
-        console.log(response);
-        if (!response.data) {
+        try {
+        this.submitForm()
+          const response = await axios.post('/api/user/registr', {
+            email: this.email,
+            password: this.password,
+            password_verify: this.confirmPassword,
+            is_coach : this.trainer,
+            phone_number:this.phone,
+            photo_url : this.image_url,
+            city : this.city,
+            FIO : this.fullName
+          });
+          console.log(response);
+          eventBus.emit('show-modal', 'Вы успешно зарегистрировались');
+          this.$router.push('/auth')
+        } catch (error) {
+          console.log(error);
+          if (error.response.status == 422) {
+            eventBus.emit('show-modal', 'Пропущенно одно или несколько обязательных полей');
           return 0
-        }
-        eventBus.emit('show-modal', 'Вы успешно зарегистрировались');
-        this.$router.push('/auth')
-      },
-      handleFileUpload(event) {
-        this.image = event.target.files[0];
-        if (this.image) {
-          this.image_url = URL.createObjectURL(this.image); // Предпросмотр изображения
+          }
+          if (error.response.status == 401) {
+            eventBus.emit('show-modal', 'Такой пользователь уже есть');
+          return 0
+          }
+          eventBus.emit('show-modal', 'Ошибка при регистрации');
         }
       },
+      // handleFileUpload(event) {
+      //   this.image = event.target.files[0];
+      //   if (this.image) {
+      //     this.image_url = URL.createObjectURL(this.image); // Предпросмотр изображения
+      //   }
+      // },
       submitForm() {
         if (this.password !== this.confirmPassword) {
           eventBus.emit('show-modal', 'Пароли не совпадают');
-        } else {
-        }
+          return 0
+        } 
       },
-      async AddPhoto(){
-        try {
-          const id = this.$route.params.id
-          const formData = new FormData();
-          formData.append('file', this.image);
-          console.log(this.image);
-          const response = await axios.post(`/api/images/add_profile_image_to_s3?id_profile=${id}`, formData, {
-            headers: {
-              // 'Content-Type': 'multipart/form-data'
-            }
-        });
-        const image_url = await axios.get(`/api/imagesget_url_image_profile_from_s3?id_profile=${id}`)
-        this.image_url = image_url.data
-        console.log(image_url.data);
+      // async AddPhoto(){
+      //   try {
+      //     const id = this.$route.params.id
+      //     const formData = new FormData();
+      //     formData.append('file', this.image);
+      //     console.log(this.image);
+      //     const response = await axios.post(`/api/images/add_profile_image_to_s3?id_profile=${id}`, formData, {
+      //       headers: {
+      //         // 'Content-Type': 'multipart/form-data'
+      //       }
+      //   });
+      //   const image_url = await axios.get(`/api/imagesget_url_image_profile_from_s3?id_profile=${id}`)
+      //   this.image_url = image_url.data
+      //   console.log(image_url.data);
         
 
-        } catch (error) {
-          console.log(error);
-          eventBus.emit('show-modal', 'Ошибка при добавлении фото, попробуйте позже');
-        }
-        alert("Добавить фото")
-      }
+      //   } catch (error) {
+      //     console.log(error);
+      //     eventBus.emit('show-modal', 'Ошибка при добавлении фото, попробуйте позже');
+      //   }
+      //   alert("Добавить фото")
+      // }
     }
   };
   </script>
@@ -257,7 +269,7 @@ export default {
     padding:3vh 0 0 3vh;
     height:4vh;
     font-size:3vh;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     color:#1d1d1d;
     font-weight: 600;
   }
@@ -276,7 +288,7 @@ export default {
     padding-top:.5vh;
     font-size: 1.3vh;
     color:#919191;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     background-color: #f0f0f0;
     overflow: hidden;
   }
@@ -288,7 +300,7 @@ export default {
     height:2.5vh;
     padding-left:3.5vh;
     font-size: 1.8vh;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     cursor:pointer;
   }
   
@@ -299,7 +311,7 @@ export default {
     height:2.5vh;
     padding-left:3.5vh;
     font-size: 1.5vh;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     cursor:pointer;
     overflow: hidden;
     width:100%;
@@ -319,7 +331,7 @@ export default {
       background-color: #f5f5f5;
       transition: background-color .6s ease;
       
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Golos-Text;
       color:#9d9d9d
     }
     .selector-option1 {
@@ -328,12 +340,12 @@ export default {
       padding: 10px;
       cursor: pointer;
       transition: background-color .6s ease;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Golos-Text;
       color:#9d9d9d
     }
     
     .selector-option1.active {
-      background-color: #333;
+      background-color: rgb(49,68,104);
       color: #fff;
       border-color: #333;
       font-weight: bold;
@@ -344,7 +356,7 @@ export default {
       
     }
     .selector-option2.active {
-      background-color: #333;
+      background-color: rgb(49,68,104);
       color: #fff;
       border-color: #333;
       font-weight: bold;
@@ -382,26 +394,26 @@ export default {
   }
   .register-button {
     display: flex;
-    background-color: #333;
+    background-color: rgb(49,68,104);
     font-size:2vh;
     align-items: center;
     justify-content: center;
     padding: .5vh 5vh;
     height:4vh;
-    border-radius: 3vh;
-    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 0vh;
+    font-family: Golos-Text;
     color:#fff;
     transition: all .4s ease;
     margin-top:1vw;
   }
   
   .register-button:hover {
-    background-color: #bfbfbf;
+    background-color: rgb(33,44,67);
     cursor:pointer;
   }
   
   p {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     color:#919191;
     transition: all .4s ease;
   }

@@ -105,10 +105,6 @@ import eventBus from '../eventBus';
       GoToRestoring(){
         this.$router.push('/user/restoring')
       },
-      onLoginClick() {
-        
-        console.log('Кнопка авторизации нажата');
-      },
       GoToReg(){
         this.$router.push('/reg')
       },  
@@ -122,10 +118,17 @@ import eventBus from '../eventBus';
           eventBus.emit('show-modal', 'Вы успешно авторизованы');
           return this.$router.push('/profile')
         }
-        if (response.status === 401) {
-          eventBus.emit('show-modal', 'Неправильный Email или пароль');
-        }
         } catch (error) {
+          console.log(error.response.status);
+          
+          if (error.response.status === 401) {
+          eventBus.emit('show-modal', 'Неправильный Email или пароль');
+          return 0
+        }
+        if (error.response.status === 422) {
+          eventBus.emit('show-modal', 'Пропущенно одно или несколько обязательных полей');
+          return 0
+        }
           eventBus.emit('show-modal', 'Непридвиденная ошибка, попробуйте через несколько минут');
         }
       },
@@ -151,13 +154,10 @@ import eventBus from '../eventBus';
     },
     created() {
     const urlParams = new URLSearchParams(window.location.search);
-    this.code = urlParams.get('code'); // Извлекаем 'code'
+    this.code = urlParams.get('code'); 
 
     if (this.code) {
-      // Если код есть, отправляем его на сервер для получения токена
       this.exchangeCodeForToken();
-
-      
     }
   },
   };
