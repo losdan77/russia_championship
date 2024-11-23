@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-      <!-- Верхняя линия с кнопками -->
       <div class="button-row">
         <button 
           v-for="(tab, index) in tabs" 
@@ -12,7 +11,6 @@
         </button>
       </div>
       
-      <!-- Блок, который меняется -->
       <div class="content-block">
         <component :is="tabs[activeTab].component"></component>
       </div>
@@ -21,21 +19,23 @@
   
   <script>
     import CalendarComp from '../components/CalendarComp.vue';
-
+    import BrassComp from './BrassComp.vue';
+  import { shallowRef } from 'vue';
   export default {
     data() {
       return {
         components: {
             CalendarComp,
+            BrassComp
 
         },
         activeTab: 0,
         tabs: [
-          { label: 'Календарь событий', component: CalendarComp },
-          { label: 'Новости спорта', component: CalendarComp },
-          { label: 'Министерство', component: CalendarComp },
-          { label: 'Вкладка 4', component: CalendarComp },
-          { label: 'Вкладка 5', component: CalendarComp },
+          { label: 'Календарь событий', component: shallowRef(CalendarComp) },
+          { label: 'Новости спорта', component: shallowRef(CalendarComp)},
+          { label: 'Министерство', component: shallowRef(BrassComp) },
+          { label: 'Вкладка 4', component: shallowRef(CalendarComp) },
+          { label: 'Вкладка 5', component: shallowRef(CalendarComp) },
         ],
       };
     },

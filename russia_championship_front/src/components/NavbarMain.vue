@@ -71,7 +71,7 @@ export default {
       this.$emit('LogoutNav')
     },
     goToMain(){
-      this.$router.push('/')
+      this.$router.push('/info')
     }
   },
   mounted(){

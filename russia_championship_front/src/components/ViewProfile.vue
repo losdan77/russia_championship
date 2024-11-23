@@ -93,7 +93,7 @@
       if (user.data.User.phone_number !==null) {//phone
         this.phone = user.data.User.phone_number
       }
-      if (user.data.User.city.city_name !==null) {//city
+      if (user.data.User.city?.city_name !==null) {//city
         this.city = user.data.User.city.city_name
       }
       if (user.data.User.fio !==null) {//fio
