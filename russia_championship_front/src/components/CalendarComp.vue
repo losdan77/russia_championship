@@ -120,7 +120,7 @@
               class="select-filter"
               v-model="selectedPrograms"
               :options="programTypes"
-              
+              label ='discipline'
               placeholder="Выберите дисциплину / программу"
             />
           </div>
@@ -151,31 +151,43 @@
         >
           <!-- Линия 1 -->
           <div class="card-line-1">
-            <div class="type-event">{{ event.title }}</div>
-            <div class="date-event">{{ event.date }}</div>
+            <div class="type-event">{{ event.Events.type_championship.type_name }}</div>
+            <div class="date-event">
+              {{ new Date(event.Events.date_start).toLocaleDateString() }} - 
+              {{ new Date(event.Events.date_end).toLocaleDateString() }}
+            </div>
           </div>
 
           <!-- Линия 2 -->
           <div class="card-line-2">
-            <div class="description-event">{{ event.description }}</div>
-            <div class="date-event">{{ event.location }}</div>
+            <div class="description-events">
+            <div class="description-event" 
+            v-for="(discipline,index) in event.Events.discipline"
+            :key="index"
+            >
+              {{ discipline.discipline_name || 'Описание отсутствует' }}
+            </div>
+          </div>
+            <div class="date-event">
+              
+            </div>
           </div>
 
           <!-- Линия 3 -->
           <div class="card-line-3">
             <div class="pins">
-              <div class="pin">{{ event.sport }}</div>
+              <div class="pin">{{ event.Events.type_sport.type_name }}</div>
               <div class="pins-second">
                 <div 
                   class="pin-2" 
-                  v-for="(group, idx) in event.ageGroups" 
+                  v-for="(group, idx) in event.Events.sex || []" 
                   :key="idx"
                 >
-                  {{ group }}
+                  {{ group.sex }}
                 </div>
               </div>
             </div>
-            <div class="date-event">{{ event.city }}</div>
+            <div class="date-event">{{ event.Events.city.city_name }}</div>
           </div>
         </div>
       </div>
@@ -192,17 +204,15 @@
     data() {
       return {
         position: "Россия",
-        filters : {
-          selectedSubject: null,
-          selectedCities: [],
-          startDate: null,
-          endDate: null,
-          selectedCompetitionType: null,
-          selectedEventType: null,
-          selectedAgeGroup: null,
-          selectedPrograms:null,
-          selectedCountGroup: null,
-        },
+        selectedSubject: null,
+        selectedCities: [],
+        startDate: null,
+        endDate: null,
+        selectedCompetitionType: null,
+        selectedEventType: null,
+        selectedAgeGroup: null,
+        selectedPrograms:null,
+        selectedCountGroup: null,
         subjects: [],
         cities: [],
         competitionTypes: [],
@@ -210,12 +220,15 @@
         ageGroups: [],
         countGroup : [],
         programTypes : [],
-        all : []
+        events : []
       };
     },
     
     
     methods: {
+      async filter(){
+        
+      },  
       async citiesBySub(){
         try {
           this.cities = (await axios.get(`/api/events/all_city_in_subject?id_subject=${this.selectedSubject.id}`)).data
@@ -269,23 +282,25 @@
           if (parsedFilters.selectedCountGroup) this.selectedCountGroup = parsedFilters.selectedCountGroup;
           
         }
-        const all_countrys = (await axios.get('/api/events/all_countrys')).data
+        // const all_countrys = (await axios.get('/api/events/all_countrys')).data
+
         this.subjects =  await (await axios.get('/api/events/all_subjects')).data
         this.cities = (await axios.get('/api/events/all_city')).data
         this.ageGroups = (await axios.get('/api/events/all_city')).data
         this.eventTypes = (await axios.get('/api/events/all_type_championship')).data
         this.competitionTypes = (await axios.get('/api/events/all_type_sport')).data
         this.ageGroups = (await axios.get('/api/events/all_sex')).data
-        this.all = (await axios.get('/api/events/all_events_with_filters')).data
-
-
+        this.events = (await axios.post('/api/events/all_events_with_filters')).data
+        // this.selectedPrograms = (await axios.post('/api/events/all_events_with_filters')).data
+        console.log(this.events );
+        
         
       } catch (error) {
         console.log(error);
         
       }
     },
-    
+    //типовой запрос, админка, заслуженный тренер россии, юзабилити тестирование
     watch: {
         
     },
@@ -572,6 +587,21 @@
   overflow: hidden; /* Обрезаем содержимое */
   text-overflow: ellipsis;
 }
+.description-events {
+  line-height: 2vh;
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  flex-direction: row;
+  height:100%;
+  width:80%;
+  gap:1vw;
+  margin-left:1vw;
+  color:#c5c5c5;
+  overflow: hidden;
+  white-space:nowrap;
+  
+}
 
 .description-event {
   font-family:Golos-Text;
@@ -581,14 +611,8 @@
   justify-content: start;
   align-items: start;
   height:100%;
-  margin-left:1vw;
-  width:70%;
   color:#c5c5c5;
-  white-space: nowrap;
-  overflow: hidden;
-  white-space: nowrap; /* Отменяем перенос текста */
-  overflow: hidden; /* Обрезаем содержимое */
-  text-overflow: ellipsis;
+  overflow: hidden; 
 }
 
 .date-event {

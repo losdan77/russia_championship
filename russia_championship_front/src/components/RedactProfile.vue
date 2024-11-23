@@ -6,8 +6,8 @@
       <div class="btn-mainpage" @click="this.$router.push('/info')">
         На главную
       </div>
-      <div class="btn-profile">
-        <img src="../assets/profile-icon.png" @click="this.$router.push('/profile')">
+      <div class="btn-profile" @click="this.$router.push('/profile')">
+        <img src="../assets/profile-icon.png" >
       </div>
     </div>
     </div>
@@ -34,13 +34,13 @@
             {{ new_fio }}
           </div>
           <div class="value-number-now" id="meta-text-info" >
-            Местоположение: {{ city }}
+            Местоположение: {{ new_city }}
           </div>
           <div class="value-number-now" id="meta-text-info">
             Моб.телефон: {{ new_phone }}
           </div>
           <div class="value-mail-now" id="meta-text-info">
-            Почт.адрес: {{ email }}
+            Почтовый адрес: {{ email }}
           </div>
         </div>
       </div>
@@ -52,10 +52,10 @@
           <label for="fio">ФИО</label>
           <input type="text" id="fio" v-model="fio" placeholder="Введите ФИО" required />
         </div>
-        <div class="input-box">
+        <!-- <div class="input-box">
           <label for="fullName">Дата рождения</label>
           <input type="text" id="fullName" v-model="birthday_date" placeholder="Введите дату рождения" required />
-        </div>
+        </div> -->
         <div class="input-box">
           <label for="phone">Телефон</label>
           <input type="tel" id="phone" v-model="phone"  placeholder="Введите свой номер телефона" required />
@@ -71,7 +71,7 @@
         <div class="input-box">
           <label for="line-textarea">О себе</label>
           <div class="line-textarea">
-            <textarea v-model="description" rows="5" placeholder="Напишите о себе..."></textarea>
+            <textarea v-model="description" rows="5" placeholder="Напишите о себе"></textarea>
         </div>
         </div>
       <div class="btns-line">
@@ -97,17 +97,18 @@ import eventBus from '../eventBus';
   export default {
     data() {
       return {
-        phone: 0,
+        phone: '',
         image : null,
         trainer : false,
         fio : '',
-        email : '',
+        email : 'не указан',
         description : '',
         city : '',
+        new_city : 'Не указано',
         birthday_date : '',
-        new_fio : '',
-        new_phone : 0,
-        image_url : 'https://storage.yandexcloud.net/step2002sharp/default.jpg'
+        new_fio : 'Не указано',
+        new_phone : 'Не указан',
+        image_url : 'https://storage.yandexcloud.net/step2002sharp/none-profile.png'
       };
     },
 
@@ -126,7 +127,7 @@ import eventBus from '../eventBus';
         console.log(typeof this.phone);
         
         const response = await axios.patch('/api/user/change/profile', {
-          birthday_date: this.birthday_date,
+          // birthday_date: this.birthday_date,
           FIO : this.fio,
           is_coach : this.trainer,
           phone_number:this.phone,
@@ -140,6 +141,7 @@ import eventBus from '../eventBus';
         }
         this.new_fio = this.fio
         this.new_phone= this.phone
+        this.new_city= this.city
         eventBus.emit('show-modal', 'Данные успешно изменены');
         
       },
@@ -154,7 +156,6 @@ import eventBus from '../eventBus';
       handleFileUpload(event) {
         const file = event.target.files[0]; 
         if (!file) return;
-
         this.image = file;
 
 
@@ -190,12 +191,17 @@ import eventBus from '../eventBus';
       if (user.data.User.about !==null) {//about
         this.description = user.data.User.about
       }
-      if (user.data.User.phone_number !==null) {//phone
+      if (user.data.User.phone_number !=="") {//phone
         this.phone = user.data.User.phone_number
         this.new_phone = this.phone
       }
-      if (user.data.User.city.city_name !==null) {//city
+      try {
+        if (user.data.User.city.city_name !==null) {//city
         this.city = user.data.User.city.city_name
+        this.new_city = this.city
+      }
+      } catch (error) {
+        
       }
       if (user.data.User.fio !==null) {//fio
         this.fio = user.data.User.FIO
@@ -286,6 +292,8 @@ import eventBus from '../eventBus';
     display:flex;
     flex-direction: column;
     gap:1vh;
+    width:90%;
+    overflow: hidden;
   }
 
   .value-name-now {
@@ -312,7 +320,7 @@ import eventBus from '../eventBus';
   }
 
   .value-number-now {
-    width:90%;
+    width:100%;
     display:flex;
     justify-content: left;
     align-items: center;
@@ -379,7 +387,7 @@ import eventBus from '../eventBus';
   }
   .input-box input {
     font-size: 17px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     border:1px solid #eaeaea;
     background-color: #eaeaea;
     border-radius: .5vh;
@@ -417,6 +425,12 @@ import eventBus from '../eventBus';
     font-family: Golos-Text;
   }
 
+  .btn-change-password:hover {
+    background-color: rgb(111, 141, 198);
+    border:1px solid rgb(111, 141, 198);
+    color:#fff;
+  }
+
   .btn-change-info:hover {
     background-color: rgb(32,44,67);
   }
@@ -429,10 +443,12 @@ import eventBus from '../eventBus';
     align-items: center;
     padding:0 2vw;
     font-family: Golos-Text-Semibold;
-    border-radius: 20px; 
     cursor: pointer;
+    border-radius: .5vh;
   }
-
+  .btn-mainpage:hover {
+    background-color: rgb(228, 228, 228);
+  }
  
   .description-line {
     height: 50%;
@@ -445,7 +461,7 @@ import eventBus from '../eventBus';
     height:20%;
     font-size:20px;
     padding-left:7%;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
     font-weight:600;
   }
 
@@ -461,6 +477,7 @@ import eventBus from '../eventBus';
     outline:0;
     background-color: #eaeaea;
     padding:0 .5vw;
+    font-family:Golos-Text;
   }
 
   .btn-line-1 {
@@ -773,19 +790,24 @@ import eventBus from '../eventBus';
 
     .btn-profile {
       background-color: #fff;
-      border-radius: 50%;
       display:flex;
       justify-content: center;
       align-items: center;
       width:2vw;
       height:4vh;
       cursor: pointer;
+      border-radius: .5vh;
+    }
+
+    .btn-profile:hover {
+      background-color: #e3e3e3;
     }
 
     .btn-profile img {
-      width:1.5vw;
-      height:3vh;
+      width:.75vw;
+      height:1.4vh;
       margin: auto;
+      filter:invert(.5)
     }
   </style>
   
