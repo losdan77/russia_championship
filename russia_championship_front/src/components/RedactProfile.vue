@@ -17,8 +17,8 @@
           <img :src="image_url" class="main-image" alt="Profile Picture">
         </div>
         <div class="image-redactor">
-          <label class="file-input-label" for="file-upload" v-if="!image">Изменить фото</label>
-          <label class="file-input-label" @click="uploadPhoto" v-if="image">Сохранить фото</label>
+          <label class="file-input-label" for="file-upload" >Изменить фото</label>
+          <!-- <label class="file-input-label" @click="handleFileUpload" v-if="image">Сохранить фото</label> -->
           <input 
             type="file" 
             id="file-upload" 
@@ -108,7 +108,8 @@ import eventBus from '../eventBus';
         birthday_date : '',
         new_fio : 'Не указано',
         new_phone : 'Не указан',
-        image_url : 'https://storage.yandexcloud.net/step2002sharp/none-profile.png'
+        image_url : 'https://storage.yandexcloud.net/step2002sharp/none-profile.png',
+        cities : []
       };
     },
 
@@ -164,19 +165,24 @@ import eventBus from '../eventBus';
           this.image_url = event.target.result;
         };
         reader.readAsDataURL(file);
+        this.uploadPhoto()
       },
 
       async uploadPhoto() {
         try {
             const formData = new FormData();
-            formData.append('image', this.image);
-            // const response = await axios.post('https://example.com/api/profile/photo', formData, {
-            //   headers: {
-            //     'Content-Type': 'multipart/form-data',
-            //   },
-            // });
+            formData.append('file', this.image);
+            const response = await axios.post('/api/images/add_profile_image_to_s3', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            });
+            console.log(response);
+            
             eventBus.emit('show-modal', 'Фото успешно загружено');
           } catch (error) {
+            console.log(error);
+            
             eventBus.emit('show-modal', 'Ошибка при загрузке фотографии');
           }
         },
@@ -184,34 +190,46 @@ import eventBus from '../eventBus';
     },
     async mounted(){
       try {
-        const user = await axios.get('/api/user/profile/me')
-      if (user.data.User.birthday_date !==null) {//about
-        this.birthday_date = user.data.User.birthday_date
-      }
-      if (user.data.User.about !==null) {//about
-        this.description = user.data.User.about
-      }
-      if (user.data.User.phone_number !=="") {//phone
-        this.phone = user.data.User.phone_number
-        this.new_phone = this.phone
-      }
-      try {
-        if (user.data.User.city.city_name !==null) {//city
-        this.city = user.data.User.city.city_name
-        this.new_city = this.city
-      }
-      } catch (error) {
-        
-      }
-      if (user.data.User.fio !==null) {//fio
-        this.fio = user.data.User.FIO
-        this.new_fio = this.fio
-      }
-      this.trainer = user.data.User.is_coach,
-      this.email = user.data.User.email
+          this.cities = (await axios.get('/api/events/all_city')).data
+          const user = await axios.get('/api/user/profile/me')
+        if (user.data.User.birthday_date !==null) {//about
+          this.birthday_date = user.data.User.birthday_date
+        }
+        if (user.data.User.about !==null) {//about
+          this.description = user.data.User.about
+        }
+        if (user.data.User.phone_number !=="") {//phone
+          this.phone = user.data.User.phone_number
+          this.new_phone = this.phone
+        }
+        try {
+          if (user.data.User.city.city_name !==null) {//city
+          this.city = user.data.User.city.city_name
+          this.new_city = this.city
+        }
+        } catch (error) {
+          
+        }
+        if (user.data.User.fio !==null) {//fio
+          this.fio = user.data.User.FIO
+          this.new_fio = this.fio
+        }
+        this.trainer = user.data.User.is_coach,
+        this.email = user.data.User.email
+
       } catch (error) {
         console.log(error);
         eventBus.emit('show-modal', 'Авторизуйтесь и поворить попытку');
+      }
+
+      
+      try {
+        const url = await (await axios.get('/api/images/get_url_image_profile_from_s3')).data
+        this.image_url = url
+        console.log(url);     
+      } catch (error) {
+        console.log(error);
+        eventBus.emit('show-modal', 'Ошибка при изменени фото, попробуйте позже');
       }
       
     }

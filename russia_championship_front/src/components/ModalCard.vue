@@ -12,31 +12,37 @@
                     </div>
                 </div>
                 <div class="line-one">
-                    <div class="form-label">Всероссийский чемпионат по плаванию в Башкирии</div>
+                    <div class="form-label">{{ selectedCompetitionType }}</div>
                     <div class="city-label">
-                        <div class="pin-city">г. Верхние подзалупки</div>
+                        <div class="pin-city">{{ selectedSubject }}</div>
                     </div>
                 </div>
                 <div class="line-two">
-                    <div class="vid-label">
-                        Плавание 3232321453264265cbvgbxc
+                    <div class="vid-label" >
+                        {{ selectedEventType }}
                     </div>
                 </div>
 
                 <div class="line-three">
-                    <div class="disp-label">
-                        ОАПОАПЬВАВЫЛОАРВЛОДВЫАЛОДВРЫАЛОВЫАВЫАЛВРЫАЛОрОАПОАПЬВАВЫЛОАРВЛОДВЫАЛОДВРЫАЛОВЫАВЫАЛВРЫАЛОрОАПОАПЬВАВЫЛОАРВЛОДВЫАЛОДВРЫАЛОВЫАВЫАЛВРЫАЛОрОАПОАПЬВАВЫЛОАРВЛОДВЫАЛОДВРЫАЛОВЫАВЫАЛВРЫАЛОр
-                    </div>
-                    <div class="date-label">
-                        11.10.2024 - 13.10.2024
+                    <div class="line-disp">
+                    <div class="disp-label" v-for="(discip,index) in selectedPrograms"
+                    :key="index"
+                    >
+                        {{ discip.discipline_name }}
                     </div>
                 </div>
-
+                    <div class="date-label">
+                        {{ startDate }} - {{ endDate }}
+                    </div>
+                </div>
+                
                 <div class="line-four">
                     <div class="sex-labels">
                     <!-- Блок sex-label завернуть в for -->
-                        <div class="sex-label">
-                            Мальчики до 25 лет
+                        <div class="sex-label" v-for="(sex,index) in selectedAgeGroup"
+                    :key="index"
+                    >
+                            {{ sex.sex }}
                         </div>
                     </div>
                     <div class="count-label">
@@ -44,11 +50,12 @@
                         <b>30</b>
                     </div>
                  </div>
+                
                  <div class="line-fifth">
-                    <div class="btn-sub">
-                        <img src="../assets/telegram.png">
-                        <div class="text-btn">Создать уведомление</div>
+                    <div class="btn-sub" @click="Notification">
+                        <div class="text-btn" >Создать уведомление</div>
                     </div>
+                    
                 </div>
             </div>
             
@@ -59,10 +66,19 @@
 <script>
 import NavbarMain from '../components/NavbarMain.vue'
 import MainPage from '../components/MainPage.vue'
+import axios from 'axios';
 export default {
     data () {
         return {
-
+            selectedCompetitionType: null,
+            selectedEventType: null,
+            selectedAgeGroup: null,
+            selectedPrograms:null,
+            selectedCountGroup: null,
+            selectedSubject: null,
+            selectedCities: [],
+            startDate: '2024-01-03',
+            endDate: '2024-12-11',
         }
     },
     components : {
@@ -70,9 +86,30 @@ export default {
         MainPage
     },
     methods: {
+        Notification(){
+            const response = await axios.post('/api/Notification',{
+                event_id : this.$route.query.id,
+                count_day : 3
+            })
+        },  
         goToMain() {
             this.$router.push('/info')
         }
+    },
+    async mounted(){
+        const id = this.$route.query.id
+        console.log(id);
+        const response = await (await axios.get(`/api/events/event_by_id?event_id=${id}`)).data
+        console.log(response);
+        this.selectedCompetitionType = response.Events.type_championship.type_name
+        this.selectedEventType = response.Events.type_sport.type_name
+        this.startDate = response.Events.date_start
+        this.endDate = response.Events.date_end
+        this.selectedSubject = response.Events.city.city_name
+        this.selectedAgeGroup = response.Events.sex
+        this.selectedPrograms = response.Events.discipline
+        this.selectedCountGroup = response.Events.count
+        
     }
 }
 </script>
@@ -200,13 +237,22 @@ export default {
 }
 
 .disp-label {
+    height:100%;
+    color:#a3a3a3;
+    
+    
+    text-align: justify;
+}
+
+.line-disp {
+    display: flex;
     width:80%;
     height:100%;
-    padding-left:2vw;
-    color:#a3a3a3;
+    flex-direction: row;
+    gap:.5vw;
     word-break:break-all;
+    padding-left:2vw;
     padding-right:2vw;
-    text-align: justify;
 }
 
 .date-label {
@@ -217,6 +263,7 @@ export default {
     align-items: start;
     color:#a8a8a8;
     font-family:Golos-Text;
+    font-size:1.4vh;
 }
 
 .logo {
@@ -234,7 +281,7 @@ export default {
 }
 
 .line-four {
-    width:100%;
+    
     height:13%;
     display: flex;
     flex-direction: row;
@@ -247,10 +294,11 @@ export default {
     flex-direction: row;
     justify-content: start;
     align-items: center ;
+    gap:.5vw;
+    margin-left:2vw;
 }
 
 .sex-label {
-    padding: 0 2vw;
     font-size: 1.5vh;
     font-family: Golos-Text;
 }
@@ -278,8 +326,8 @@ export default {
 }
 
 .btn-sub {
-    background-color: #00b8ef;
-    font-family: Golos-Text;
+    background-color: #ff9b05;
+    font-family: Golos-Text-Semibold;
     font-size:1.4vh;
     width:25%;
     display:flex;

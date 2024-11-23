@@ -72,6 +72,8 @@ export default {
   opacity: 0;
   transform: translateY(-50px);
 }
-
+p{
+  font-family: Golos-Text;
+}
 
 </style>

@@ -2,7 +2,7 @@
     <div class="window-view-profile">
       <div class="profile-photo">
         <div class="photo">
-          <img src="..//assets/photo-profile.jpg">
+          <img :src="image_url">
         </div>
       </div>
       <div class="profile-content">
@@ -71,7 +71,8 @@
         description : 'Добавьте описание к своему профилю: свои достижения и/или список наград',
         phone : 'Телефон не указан',
         city : 'Город не указан',
-        birthday_date : 'не указана'
+        birthday_date : 'не указана',
+        image_url : 'https://storage.yandexcloud.net/step2002sharp/none-profile.png'
 
       }
     },
@@ -97,8 +98,17 @@
         this.city = user.data.User.city.city_name
       }
       } catch (error) {
-        
+        console.log(error);
       }
+      try {
+        const url = await (await axios.get('/api/images/get_url_image_profile_from_s3')).data
+        this.image_url = url
+        console.log(url);     
+      } catch (error) {
+        console.log(error);
+        eventBus.emit('show-modal', 'Ошибка при изменени фото, попробуйте позже');
+      }
+
       if (user.data.User.fio !==null) {//fio
         this.fio = user.data.User.FIO
       }

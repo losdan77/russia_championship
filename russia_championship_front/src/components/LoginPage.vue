@@ -17,8 +17,13 @@
       </section>
       <section class="right-section">
         <div class="section" id="section-2">
-          <div class="upper-wrapper">
-            Вход
+          <div class="line-up">
+            <div class="upper-wrapper">
+              Вход
+            </div>
+            <div class="btn-back-box" @click="this.$router.push('/')">
+              <div class="btn-back">Назад</div>
+            </div>
           </div>
           <div class="input-wrapper">
             <form @submit.prevent="submitForm">
@@ -266,15 +271,51 @@ import eventBus from '../eventBus';
     width:3vw;
     height:3vw;
   }
-  
+  .line-up {
+    width:100%;
+    height: 6vh;
+    display:flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center
+  }
   
   .upper-wrapper {
-    padding:3vh 0 0 3vh;
+    height:100%;
+    width:50%;
+    display:flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: end;
+    margin-left: 1.5vw;
+    font-family:Golos-Text;
+    font-size:3.5vh;
+  }
+  .btn-back-box {
+    height:100%;
+    width:50%;
+    padding-right:1.5vw;
+    display:flex;
+    justify-content: end;
+    align-items: end
+
+  }
+  .btn-back {
+    background-color: #f5f5f5;
+    color:#858585;
+    font-family:Golos-Text;
+    font-size:1.8vh;
+    padding: 0 3.3vw;
     height:4vh;
-    font-size:3vh;
-    font-family: Golos-Text;
-    color:#1d1d1d;
-    font-weight: 600;
+    display:flex;
+    justify-content:center ;
+    align-items: center;;
+  }
+
+  .btn-back:hover {
+    background-color: #f5f5f5;
+    color:#000;
+    cursor:pointer;
   }
   
   .input-wrapper {

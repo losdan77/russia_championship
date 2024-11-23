@@ -9,6 +9,7 @@ import RestoringPage from '../components/RestoringPage.vue';
 import ChangePassword from '../components/ChangePassword.vue';
 import ModalCard from '../components/ModalCard.vue';
 import CardPrimary from '../components/CardPrimary.vue';
+import CalendarPage from '../components/CalendarPage.vue';
 
 const routes = [
   { path: '/', component: PrimaryPage },
@@ -21,6 +22,7 @@ const routes = [
   { path: '/user/restoring', component: RestoringPage},
   { path: '/user/changepass', component: ChangePassword},
   { path: '/card', component: CardPrimary},
+  { path: '/info/calendar', component: CalendarPage},
 
 ];
 

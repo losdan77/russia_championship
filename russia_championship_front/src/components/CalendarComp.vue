@@ -29,7 +29,6 @@
             filterable
             placeholder="Начните вводить"
             @update:modelValue="filter"
-            @input="citiesBySub"
             :selectedSubject
           />
         </div>
@@ -59,14 +58,14 @@
               class="date-input"
               v-model="startDate"
               @change="filter"
-
+              :disabled="isAnyChecked"
               />
               <input
               type="date"
               class="date-input"
               v-model="endDate"
-
               @change="filter"
+              :disabled="isAnyChecked "
               />
           </div>
         </div>
@@ -153,31 +152,35 @@
         </div>
       </div>
       <div class="box-checkbtn">
-    <label>
-      <input 
-        type="checkbox" 
-        v-model="mainCheckbox1"
-        :disabled="isAnyChecked && !mainCheckbox1"
-      />
-      1 мес.
-    </label>
-    <label>
-      <input 
-        type="checkbox" 
-        v-model="mainCheckbox2" 
-        :disabled="isAnyChecked && !mainCheckbox2"
-        />
-        
-      3 мес.
-    </label>
-    <label>
-      <input 
-        type="checkbox" 
-        v-model="mainCheckbox3" 
-        :disabled="isAnyChecked && !mainCheckbox3"
-        />
-      6 мес.
-    </label>
+        <label>
+          <input 
+            type="checkbox" 
+            v-model="mainCheckbox1"
+            :disabled="isAnyChecked && !mainCheckbox1"
+            @change="filter"
+            
+          />
+          1 мес.
+        </label>
+        <label>
+          <input 
+            type="checkbox" 
+            v-model="mainCheckbox2" 
+            :disabled="isAnyChecked && !mainCheckbox2"
+            @change="filter"
+            />
+            
+          3 мес.
+        </label>
+        <label>
+          <input 
+            type="checkbox" 
+            v-model="mainCheckbox3" 
+            :disabled="isAnyChecked && !mainCheckbox3"
+            @change="filter"
+            />
+          6 мес.
+        </label>
     <button @click="toggleMoreFilters" class="btn-checkbox">
       {{ showMoreFilters ? "Скрыть" : "Еще" }}
     </button>
@@ -188,6 +191,7 @@
         type="checkbox" 
         v-model="extraCheckbox1"
         :disabled="isAnyChecked && !extraCheckbox1" 
+        @change="filter"
         />
         Ближайшие мероприятия
       </label>
@@ -195,7 +199,9 @@
         <input 
           type="checkbox" 
           v-model="extraCheckbox2" 
-          :disabled="isAnyChecked && !extraCheckbox2"
+          :disabled=" isAnyChecked && !extraCheckbox2 "
+          @change="filter"
+          
           />
         Мероприятия текущей недели
       </label>
@@ -204,6 +210,7 @@
           type="checkbox" 
           v-model="extraCheckbox3" 
           :disabled="isAnyChecked && !extraCheckbox3"
+          @change="filter"
           />
         Мероприятия следующего месяца
       </label>
@@ -211,26 +218,23 @@
         <input 
           type="checkbox" 
           v-model="extraCheckbox4" 
-          :disabled="isAnyChecked && !extraCheckbox4"/>
+          :disabled="isAnyChecked && !extraCheckbox4"
+          @change="filter"/>
         Мероприятия полугодия
       </label>
     </div>
   </transition>
   </div>
-
-  <!-- Выплывающий блок с дополнительными чекбоксами -->
-  
-
       <div class="btns-filter">
         <div class="btns-filter-save-delete">
         <div class="btn-save-filter" @click="saveFilter">
-          Запомнить фильтр
+          Сохранить фильтр
         </div>
         <div class="btn-delete-filter" @click="deleteFilter">
           X
         </div>
         </div>
-        <div class="btn-save-filter" id="btn-calendar" @click="saveFilter">
+        <div class="btn-save-filter" id="btn-calendar" @click="this.$router.push('/info/calendar')">
           Календарь
         </div>
       </div>
@@ -241,6 +245,7 @@
         class="card-event" 
         v-for="(event, index) in events" 
         :key="index"
+        @click="GoToCard(event.Events.id)"
       >
         <!-- Линия 1 -->
         <div class="card-line-1">
@@ -319,35 +324,73 @@
         mainCheckbox1: false,
         mainCheckbox2: false,
         mainCheckbox3: false,
-        // Дополнительные чекбоксы
+
         extraCheckbox1: false,
         extraCheckbox2: false,
         extraCheckbox3: false,
         extraCheckbox4: false,
-        // Видимость дополнительного блока
+
         showMoreFilters: false,
       };
     },
     
     
     methods: {
+      GoToCard(id){
+        this.$router.push(`/info/card?id=${id}`)
+      },
       async filter(){
         this.loading = true
-        console.log(this.selectedPrograms); 
+        // console.log(this.firstDate);
+        // console.log(this.secondDate);
+        // console.log(this.thirdDate);
+
+        //mainCHECKBOX
+        if (this.selectedCities) {
+          this.citiesBySub()
+        }
+
+        if (this.mainCheckbox1) {
+          this.startDate = this.currentDate
+          this.endDate = this.firstDate
+        }
+        if (this.mainCheckbox2 ||this.extraCheckbox3) {
+          this.startDate = this.currentDate
+          this.endDate = this.secondDate
+        }
+        if (this.mainCheckbox3 || this.extraCheckbox4) {
+          this.startDate = this.currentDate
+          this.endDate = this.thirdDate
+        }
+        //extraCHECBOX
+        if (this.extraCheckbox1) {
+          this.startDate = this.currentDate
+          this.endDate = this.threedays
+        }
+        if (this.extraCheckbox2) {
+          this.startDate = this.currentDate
+          this.endDate = this.week
+        }
+
+
+        // console.log(this.endDate);
+        // console.log(this.startDate);
         try {
-          console.log(this.selectedSubject?this.selectedSubject.subject_name : null);
-          console.log(this.selectedCities[0]? this.selectedCities[0].city_name : null);
-          console.log(this.selectedPrograms? this.selectedPrograms.discipline_name:null );
-          console.log(this.selectedCountGroup?this.selectedCountGroup.count : null);
-          console.log(this.selectedAgeGroup? this.selectedAgeGroup.sex:null);
-          console.log(this.startDate);
-          console.log(this.endDate);
-          console.log(this.selectedEventType ? this.selectedEventType.type_name : null);
-          console.log(this.selectedCompetitionType ? this.selectedCompetitionType.type_name : null);
-          
+
+
+          // console.log(this.selectedSubject?this.selectedSubject.subject_name : null);
+          // console.log(this.selectedCities[0]? this.selectedCities[0].city_name : null);
+          // console.log(this.selectedPrograms? this.selectedPrograms.discipline_name:null );
+          // console.log(this.selectedCountGroup?this.selectedCountGroup.count : null);
+          // console.log(this.selectedAgeGroup? this.selectedAgeGroup.sex:null);
+          // console.log(this.startDate);
+          // console.log(this.endDate);
+          // console.log(this.selectedEventType ? this.selectedEventType.type_name : null);
+          // console.log(this.selectedCompetitionType ? this.selectedCompetitionType.type_name : null);
 
           
-
+          
+          
           const response = (await axios.post(`/api/events/all_events_with_filters`,{
             subject : this.selectedSubject?this.selectedSubject.subject_name : null,
             city : this.selectedCities[0]? this.selectedCities[0].city_name : null,
@@ -386,6 +429,8 @@
       async citiesBySub(){
         try {
           this.cities = (await axios.get(`/api/events/all_city_in_subject?id_subject=${this.selectedSubject.id}`)).data
+          console.log(this.cities);
+          
         } catch (error) {
           // eventBus.emit('show-modal', 'Для более точного поиска рекомендуется выбрать субъект');  
         }
@@ -399,16 +444,15 @@
       },
       async deleteFilter(){
         localStorage.removeItem('filters')
-        selectedSubject = null
-        selectedCities = []
-        startDate ='2024-01-03',
-        endDate = '2024-12-11',
-        selectedCompetitionType = null
-        selectedEventType = null
-        selectedAgeGroup = null
-        selectedPrograms = null
-        selectedCountGroup = null
-
+        this.selectedSubject = null
+        this.selectedCities = []
+        this.startDate ='2024-01-03',
+        this.endDate = '2024-12-11',
+        this.selectedCompetitionType = null
+        this.selectedEventType = null
+        this.selectedAgeGroup = null
+        this.selectedPrograms = null
+        this.selectedCountGroup = null
         await this.filter()
       },
       saveFilter() {
@@ -425,7 +469,7 @@
           selectedPrograms: this.selectedPrograms,
           selectedCountGroup: this.selectedCountGroup,
         }));
-        Bus
+        eventBus.emit('show-modal', 'Настройки фильтров сохранены');
       },
       toggleMoreFilters() {
       this.showMoreFilters = !this.showMoreFilters;
@@ -445,6 +489,74 @@
           this.extraCheckbox4
         );
       },
+
+      currentDate(){
+        const currentDate = new Date();
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(currentDate.getMonth());
+        const year = oneMonthLater.getFullYear();
+        const month = String(oneMonthLater.getMonth()+1).padStart(2, '0'); // Преобразуем месяц в двухзначное число с ведущими нулями
+        const day = String(oneMonthLater.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+        
+      },
+
+      week(){
+        const currentDate = new Date();
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(currentDate.getMonth());
+        const year = oneMonthLater.getFullYear();
+        const month = String(oneMonthLater.getMonth()+1).padStart(2, '0'); // Преобразуем месяц в двухзначное число с ведущими нулями
+        const day = String(oneMonthLater.getDate()+7).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+      },
+
+      threedays(){
+        const currentDate = new Date();
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(currentDate.getMonth());
+        const year = oneMonthLater.getFullYear();
+        const month = String(oneMonthLater.getMonth()+1).padStart(2, '0'); // Преобразуем месяц в двухзначное число с ведущими нулями
+        const day = String(oneMonthLater.getDate()+3).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+      },
+      firstDate(){
+        const currentDate = new Date();
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(currentDate.getMonth() + 1);
+        const year = oneMonthLater.getFullYear();
+        const month = String(oneMonthLater.getMonth()+1).padStart(2, '0'); // Преобразуем месяц в двухзначное число с ведущими нулями
+        const day = String(oneMonthLater.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+        
+      },
+      secondDate(){
+        const currentDate = new Date();
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(currentDate.getMonth() + 3);
+        const year = oneMonthLater.getFullYear();
+        const month = String(oneMonthLater.getMonth()+1).padStart(2, '0'); // Преобразуем месяц в двухзначное число с ведущими нулями
+        const day = String(oneMonthLater.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+        
+      },
+      thirdDate(){
+        const currentDate = new Date();
+        const oneMonthLater = new Date();
+        oneMonthLater.setMonth(currentDate.getMonth() + 6);
+        const year = oneMonthLater.getFullYear();
+        const month = String(oneMonthLater.getMonth()+1).padStart(2, '0'); // Преобразуем месяц в двухзначное число с ведущими нулями
+        const day = String(oneMonthLater.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+        
+      },
+      
     },
     async mounted(){
       try {
@@ -768,6 +880,7 @@
   }
 
 .card-event {
+  cursor: pointer;
   background-color: #ffffff;
   border-top:1px solid #ddd;
   width:100%;
@@ -956,6 +1069,7 @@ label {
   font-family: Golos-Text;
   font-weight: 600;
   border-radius: 2vw;
+  cursor: pointer;
 }
 
 .box-checkbtn label {

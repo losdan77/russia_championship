@@ -20,22 +20,25 @@
   <script>
     import CalendarComp from '../components/CalendarComp.vue';
     import BrassComp from './BrassComp.vue';
+    import NewsComp from './NewsComp.vue';
+    import UpdateComp from './UpdateComp.vue';
   import { shallowRef } from 'vue';
   export default {
     data() {
       return {
         components: {
             CalendarComp,
-            BrassComp
+            BrassComp,
+            NewsComp
 
         },
         activeTab: 0,
         tabs: [
           { label: 'Календарь событий', component: shallowRef(CalendarComp) },
-          { label: 'Новости спорта', component: shallowRef(CalendarComp)},
+          { label: 'Новости спорта', component: shallowRef(NewsComp)},
           { label: 'Министерство', component: shallowRef(BrassComp) },
-          { label: 'Вкладка 4', component: shallowRef(CalendarComp) },
-          { label: 'Вкладка 5', component: shallowRef(CalendarComp) },
+          { label: 'Обновления', component: shallowRef(UpdateComp) },
+          // { label: 'Вкладка 5', component: shallowRef(CalendarComp) },
         ],
       };
     },
