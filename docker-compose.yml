@@ -50,7 +50,7 @@ services:
     build:
       context: ./russia_championship_backend/
     container_name: russia_championship_celery-beat
-    command: ["/booking_app/docker/celery-beat.sh"]
+    command: ["/backend/docker/celery-beat.sh"]
     env_file:
       - ./russia_championship_backend/.env-non-dev
     depends_on:

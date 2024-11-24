@@ -14,15 +14,15 @@ async def start():
 
 
     scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
-    # scheduler.add_job(mailing,
-    #                   trigger='cron',
-    #                   hour=10,
-    #                   minute=0,
-    #                   kwargs={'bot': bot})
     scheduler.add_job(mailing,
-                      trigger='interval',
-                      seconds=20,
+                      trigger='cron',
+                      hour=10,
+                      minute=0,
                       kwargs={'bot': bot})
+    # scheduler.add_job(mailing,
+    #                   trigger='interval',
+    #                   seconds=20,
+    #                   kwargs={'bot': bot})
     scheduler.start()
 
 

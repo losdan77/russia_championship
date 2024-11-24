@@ -4,9 +4,9 @@ RUN mkdir /backend
 
 WORKDIR /backend
 
-COPY requirements.txt .
+COPY requeriments.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install -r requeriments.txt
 
 COPY . .
 
