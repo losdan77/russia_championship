@@ -1,14 +1,14 @@
 <template>
   <nav class="navbar">
     <div class="navbar-logo" @click="goToMain">
-      <img src="..//assets/yandex.png" alt="Logo" class="logo" @click="goToMain"/>
+      <img src="..//assets/logo.png" alt="Logo" class="logo" @click="goToMain"/>
     </div>
 
     <div class="navbar-buttons desktop-buttons">
-      <button class="navbar-button" id="btn-telegram-2">
+      <button class="navbar-button" id="btn-telegram-2" @click="goTosite">
         <img src="..//assets/telegram.png"/>
       </button>
-      <button class="navbar-button" id="btn-telegram"><div class="img"></div></button>
+      <button class="navbar-button" id="btn-telegram" @click="goTosite"><div class="img"></div></button>
       <button class="navbar-button" id="btn-input" @click="goToProfile" v-if="onProfile">Профиль</button>
       <button class="navbar-button" @click="logout" id="btn-reg">
         <div class="text-btn" @click="logout">Выйти</div> <img src="..//assets/btn-exit.png"/>
@@ -23,8 +23,8 @@
     </div>
 
     <div v-if="isMenuOpen" class="mobile-menu">
-      <button class="navbar-button" id="btn-menu" @click="closeMenu">Войти</button>
-      <button class="navbar-button" id="btn-menu" @click="closeMenu">Зарегистрироваться</button>
+      <button class="navbar-button" id="btn-menu" @click="goToProfile">Профиль</button>
+      <button class="navbar-button" id="btn-menu" @click="logout">Выйти</button>
       <button class="navbar-button" id="btn-menu-telegram" @click="closeMenu">Телеграм</button>
     </div>
   </nav>
@@ -42,14 +42,24 @@ export default {
     };
   },
   methods: {
+    goTosite(){
+      window.open('https://t.me/test_los_for_channel_bot/','_blank')
+            },
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
     closeMenu() {
       this.isMenuOpen = false;
     },
+    GoToReg(){
+      this.isMenuOpen = false;
+      this.$router.push('/reg')
+    },  
+    Authorization(){
+      this.isMenuOpen = false;
+      this.$router.push('/auth')
+    },
     goToProfile(){
-      console.log(this.$route.fullPath)
       // const url =  this.$route.fullPath
       
       // if (url === '/profile') {
@@ -58,13 +68,13 @@ export default {
       this.$router.push('/profile')
     },
     async logout(){
-      this.$router.push('/auth')
-      const response = await axios.post('/api//user/logout')
+      this.$router.push('/')
+      const response = await axios.post('/api/user/logout')
       eventBus.emit('show-modal', 'Вы вышли из аккаунта');
       this.$emit('LogoutNav')
     },
     goToMain(){
-      this.$router.push('/')
+      this.$router.push('/info')
     }
   },
   mounted(){
@@ -84,12 +94,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding:0 15vw;
+  width:100%;
   background-color: #ffffff;
   color: white;
-  -webkit-box-shadow: 0px 31px 16px -12px rgba(34, 60, 80, 0.2);
-  -moz-box-shadow: 0px 31px 16px -12px rgba(34, 60, 80, 0.2);
-  box-shadow: 0px 31px 16px -12px rgba(34, 60, 80, 0.2);
+  -webkit-box-shadow: 0px 10px 8px -4px rgba(34, 60, 80, 0.48);
+-moz-box-shadow: 0px 10px 8px -4px rgba(34, 60, 80, 0.48);
+box-shadow: 0px 10px 8px -4px rgba(34, 60, 80, 0.48);
 }
 
 
@@ -97,6 +107,7 @@ export default {
   width: 40px;
   filter: invert(.7);
   cursor: pointer;
+  margin-left:7vw;
 }
 
 
@@ -105,6 +116,7 @@ export default {
   flex-direction: row;
   align-items: center;
   height:6vh;
+  margin-right:7vw;
 }
 
 .navbar-button {
@@ -114,24 +126,23 @@ export default {
   cursor: pointer;
   padding: 0 2vw;
   height:6vh;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-family:Golos-Text;
   transition: all .4s ease;
 }
 
 #btn-input {
-  background-color: #118de5;
+  background-color: rgb(49,68,104);
   color:#ffffff;
   font-weight: 600;
 }
 
 #btn-input:hover {
-  background-color: #0d79c6;
+  background-color: rgb(37, 51, 77);
 }
 
 #btn-reg {
   background-color: #fff;
   color:#323232;
-  font-family:Arial, Helvetica, sans-serif;
   font-weight: 600;
   column-gap:10px;
   display: flex;
@@ -148,7 +159,7 @@ export default {
 
 #btn-reg:hover {
   background-color: #f4f4f4;
-  color:#0d79c6;
+  color:rgb(83, 114, 171);
 }
 
 #btn-telegram {
@@ -281,6 +292,25 @@ export default {
   .navbar{
     padding-top:1vw;
     padding-bottom:1vw;
+  }
+  .navbar {
+    display:flex;
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 580px) {
+  .navbar {
+    display:flex;
+    flex-direction: row;
+    width:120%;
+  }
+}
+@media (max-width: 450px) {
+  .navbar {
+    display:flex;
+    flex-direction: row;
+    width:140%;
   }
 }
 </style>

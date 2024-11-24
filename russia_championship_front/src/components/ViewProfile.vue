@@ -2,7 +2,7 @@
     <div class="window-view-profile">
       <div class="profile-photo">
         <div class="photo">
-          <img src="..//assets/photo-profile.jpg">
+          <img :src="image_url">
         </div>
       </div>
       <div class="profile-content">
@@ -10,44 +10,47 @@
           <div class="tabs">
             <div class="tab" id="name-city">
               <img src="..//assets/marker.png">
-              <div class="text-tab">Санкт-Петербург</div>
+              <div class="text-tab">{{ city }}</div>
             </div>
+            <!-- <div class="tab" id="name-city">
+              <img src="..//assets/marker.png">
+              <div class="text-tab">{{birthday_date}}</div>
+            </div> -->
   
             <div class="tab" id="name-status">
-              <div class="text-tab">Физ.лицо</div>
+              <div class="text-tab" v-if="trainer">Тренер</div>
+              <div class="text-tab" v-if="!trainer">Спортсмен</div>
             </div>
-  
+
           </div>
         </div>
         <div class="content-line" id="username">
-          <div class="text-username">Иванов Иван</div>
+          <div class="text-username">{{ fio }}</div>
         </div>
         <div class="content-line" id="feedback">
           <div class="tabs">
             <div class="tab" id="feedback-tab">
               <img src="..//assets/phone.png">
-              <div class="text-tab">7-(953)-291-76-79</div>
+              <div class="text-tab" >{{ phone }}</div>
+
             </div>
             <div class="tab" id="feedback-tab">
               <img src="..//assets/mail.png">
-              <div class="text-tab">zavatsk222222222iy_13@mail.ru</div>
+              <div class="text-tab">{{ email }}</div>
             </div>
           </div>
         </div>
         <div class="content-line" id="decription">
           <div class="left-content">
             <div class="text-description">
-              Я черный парнишка, в трусах еловая шишка: большая прибольшая. Кто сказал что я черный, я просто шоколадный. Бубылда яичная. Предоставляю свои услуги для дам 65+. 
+              {{ description }}
               
             </div>
           </div>
           <div class="right-content">
             <div id="tabs-description">
-            <div class="tab" id="description-tab">
-              <div class="text-tab">Отзывы</div>
-            </div>
+
             <div class="tab" id="edit-tab" @click="goTOChangeProfile">
-              <img src="..//assets/profile.png">
               <div class="text-tab" >Редактировать профиль</div>
             </div>
           </div>
@@ -58,10 +61,18 @@
   </template>
   
   <script>
-
+  import axios from 'axios';
   export default {
     data(){
       return {
+        trainer : false,
+        fio : 'Вы не авторизованы',
+        email : 'не указан',
+        description : 'Добавьте описание к своему профилю: свои достижения и/или список наград',
+        phone : 'Телефон не указан',
+        city : 'Город не указан',
+        birthday_date : 'не указана',
+        image_url : 'https://storage.yandexcloud.net/step2002sharp/none-profile.png'
 
       }
     },
@@ -69,6 +80,41 @@
       goTOChangeProfile(){
         this.$router.push('/profile/change')
       }
+    },
+    async mounted(){
+      const user = await axios.get('/api/user/profile/me')
+      if (user.data.User.birthday_date !==null) {//about
+        this.birthday_date = user.data.User.birthday_date
+      }
+      if (user.data.User.about !==null) {//about
+        this.description = user.data.User.about
+      }
+      if (user.data.User.phone_number !=="") {//phone
+        this.phone = user.data.User.phone_number
+      }
+      try {
+        if (user.data.User.city.city_name !==null) {//city
+        this.city = user.data.User.city.city_name
+      }
+      } catch (error) {
+        console.log(error);
+      }
+      try {
+        const url = await (await axios.get('/api/images/get_url_image_profile_from_s3')).data
+        this.image_url = url   
+      } catch (error) {
+        console.log(error);
+        eventBus.emit('show-modal', 'Ошибка при изменени фото, попробуйте позже');
+      }
+
+      if (user.data.User.fio !==null) {//fio
+        this.fio = user.data.User.FIO
+      }
+      this.trainer = user.data.User.is_coach,
+      this.email = user.data.User.email
+
+
+      
     }
   }
   
@@ -167,19 +213,18 @@
   }
   
   .tab {
-    background-color: rgb(255, 145, 0);
+    background-color: rgb(49,68,104);
     display:flex;
     text-align: center;
-    font-size: 1.6vh;
+    font-size: 1.5vh;
     padding: 1.5vh 3vh;
     border-radius: .2vh;
+    font-family: Golos-Text-Semibold;
     color:#fff;
-    font-family: Arial, Helvetica, sans-serif;
     flex-direction: row;
     align-items: center;
     gap:10px;
     justify-content: center;
-    font-weight: 600;
   }
   
   
@@ -193,26 +238,9 @@
     justify-content: left;
     padding-left:2vw;
     font-size: 5vh;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Golos-Text;
   }
   
-  #feedback-tab {
-    background-color: rgb(255, 145, 0);
-    display:flex;
-    text-align: center;
-    font-size: 1.6vh;
-    padding: 1vh 3vh;
-    border-radius: .2vh;
-    color:#fff;
-    font-family: Arial, Helvetica, sans-serif;
-    display:flex;
-    flex-direction: row;
-    align-items: center;
-    gap:10px;
-    justify-content: center;
-    font-weight: 600;
-    white-space: nowrap;
-  }
   
   .text-tab {
     white-space: nowrap;
@@ -227,10 +255,11 @@
   }
   
   #feedback-tab {
-    background-color: rgb(59, 59, 59);
-    color:#ddd;
+    background-color: rgb(210, 210, 210);
+    color:#ffffff;
     font-size: 1.3vh;
     font-weight: 600;
+    border-radius: .5vh;
   }
   
   #decription {
@@ -252,11 +281,12 @@
   }
   
   .text-description  {
-    font-size: 2vh;
+    font-size: 1.6vh;
     width:88%;
     height:100%;
     overflow: hidden;
     text-align: justify;
+    font-family:Golos-Text;
     height:6vw;
   }
   
@@ -265,20 +295,24 @@
     flex-direction: column;
     gap:1vh;
     height: 100%;
-    justify-content: top;
     padding: 0 2vh;
-    
+    display:flex;
+    justify-content: end;
+    align-items: center;
   }
   
   #description-tab {
-    background-color: rgb(255, 153, 1);
   }
   
   #edit-tab {
     background-color: rgb(47, 47, 47);
     font-size: 1.3vh;
-    padding: 2vh 3vh;
-    height: 100%;
+    font-family: Golos-Text;
+    border-radius: 1vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 20%;
   }
   
   #edit-tab:hover {

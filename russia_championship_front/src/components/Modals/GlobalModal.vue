@@ -30,7 +30,7 @@ export default {
       // Закрываем модальное окно через 2 секунды
       setTimeout(() => {
         this.isVisible = false;
-      }, 2000);
+      }, 3000);
     },
     closeModal() {
       this.isVisible = false;
@@ -72,6 +72,8 @@ export default {
   opacity: 0;
   transform: translateY(-50px);
 }
-
+p{
+  font-family: Golos-Text;
+}
 
 </style>

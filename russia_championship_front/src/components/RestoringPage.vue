@@ -83,7 +83,6 @@ export default {
         async Authorization() {
             try {
                 const response = await axios.post(`/api/user/dont_remember_password?email=${this.email}`)
-                console.log(response);
                 if (response.status === 200) {
                     this.isAuthorized = true;
                 }
@@ -95,17 +94,16 @@ export default {
         async goToNextPage() {
             try {
                 const response = await axios.post(`/api/user/verify_singlemode_code_from_mail?email=${this.email}&code=${this.authCode}`)
-                console.log(response);
                 if (response.status === 200) {
                     this.isCodeCorrect = true;
                 }
             } catch (error) {
                 eventBus.emit('show-modal', 'Неверный проверочный код ');
             }
-            },
-            async SubmitRestoring() {
-            console.log('sdfsdf');
-            
+            }
+
+        },
+        async SubmitRestoring(){
             try {
                 const response = await axios.post(`/api/user/create_new_password`,{
                     email: this.email,
@@ -123,9 +121,6 @@ export default {
 
             
         }
-
-        },
-
     }
 
 </script>
