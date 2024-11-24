@@ -7,15 +7,20 @@
                     <div class="logo">
                         <img src="../assets/logo.png">
                     </div>
+                    <div class="line-btns">
+                    <div class="btn-main" @click="goToCal">
+                        Назад
+                    </div>
                     <div class="btn-main" @click="goToMain">
                         На главную
                     </div>
+                </div>
                 </div>
                 <div class="line-one">
                     <div class="form-label">{{ selectedCompetitionType }}</div>
                     <div class="city-label">
                         <div class="pin-city">{{ selectedSubject }}</div>
-                    </div>
+                </div>
                 </div>
                 <div class="line-two">
                     <div class="vid-label" >
@@ -47,15 +52,29 @@
                     </div>
                     <div class="count-label">
                         Кол-во участников    
-                        <b>30</b>
+                        <b>{{selectedCountGroup}}</b>
                     </div>
                  </div>
                 
                  <div class="line-fifth">
-                    <div class="btn-sub" @click="Notification">
+                    <div class="btn-sub" @click="showModal = true">
                         <div class="text-btn" >Создать уведомление</div>
                     </div>
                     
+                </div>
+            </div>
+            <!-- Модальное окно -->
+            <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
+                <div class="modal">
+                    <div class="modal-header">Создание уведомления</div>
+                    <div class="modal-body">
+                        <label for="notificationDays">Укажите за сколько нужно отправить уведомление:</label>
+                        <input id="notificationDays" type="number" v-model="notificationDays" class="modal-input"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" @click="showModal = false">Отмена</button>
+                        <button class="btn-confirm" @click="createNotification">Создать</button>
+                    </div>
                 </div>
             </div>
             
@@ -67,6 +86,7 @@
 import NavbarMain from '../components/NavbarMain.vue'
 import MainPage from '../components/MainPage.vue'
 import axios from 'axios';
+import eventBus from '../eventBus';
 export default {
     data () {
         return {
@@ -79,6 +99,8 @@ export default {
             selectedCities: [],
             startDate: '2024-01-03',
             endDate: '2024-12-11',
+            showModal: false,
+            notificationDays : 3
         }
     },
     components : {
@@ -86,14 +108,41 @@ export default {
         MainPage
     },
     methods: {
-        Notification(){
-            const response = await axios.post('/api/Notification',{
-                event_id : this.$route.query.id,
-                count_day : 3
-            })
+        async createNotification(){
+            try {
+                const id = this.$route.query.id
+                const count_day = this.notificationDays
+                console.log(id,count_day);
+                
+                const response = await axios.post('/api/events/subscribe_notification',{
+                    event_id : id,
+                    count_day 
+                })
+                this.showModal=false
+            } catch (error) {
+                if (error.status === 409) {
+                    console.log(error);
+                    eventBus.emit('show-modal', 'Нельзя подписаться на событие, которое закончилось. Попробуйте изменить фильтры для поиска актуальных событий');
+                    this.showModal=false
+                    return 0
+                }
+                if (error.status === 405) {
+                    console.log(error);
+                    eventBus.emit('show-modal', 'Вы уже подписаны');
+                    this.showModal=false
+                    return 0
+                }
+                eventBus.emit('show-modal', 'Ошибка при подписке на уведомление, попробуйте позже'); 
+                
+            }
+            
+            
         },  
         goToMain() {
             this.$router.push('/info')
+        },
+        goToCal() {
+            this.$router.push('/info/calendar')
         }
     },
     async mounted(){
@@ -237,22 +286,24 @@ export default {
 }
 
 .disp-label {
-    height:100%;
+    flex-wrap: wrap;
     color:#a3a3a3;
-    
-    
-    text-align: justify;
+    padding: 0;
+    display: flex;
+    margin-right: .6vw;
+    text-align: center;
 }
 
 .line-disp {
     display: flex;
     width:80%;
-    height:100%;
+    height:50%;
     flex-direction: row;
-    gap:.5vw;
+    gap:.2vw;
     word-break:break-all;
     padding-left:2vw;
     padding-right:2vw;
+    flex-wrap: wrap;
 }
 
 .date-label {
@@ -350,5 +401,108 @@ export default {
     background-color: #a8a8a8;
     transition: all .4s ease;
     cursor:pointer;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 500px;
+    height:200px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Golos-Text;
+}
+
+.modal-header {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-family:Golos-Text;
+}
+
+.modal-body {
+    margin-bottom: 15px;
+}
+
+.modal-input {
+    width: 30%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    height:15%;
+    width:65%;
+    gap:.5vw;
+}
+
+.btn-cancel {
+    background: #4a4a4a;
+    color: white;
+    border: none;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family:Golos-Text-Semibold;
+    font-size:1.5vh;
+    padding: 0 2vw;
+    margin-left: 1vw;
+}
+
+.btn-cancel:hover {
+    background: #a5a5a5;
+    transition: all .4s ease;
+}
+
+.btn-confirm {
+    background: #ff820d;
+    color: white;
+    border: none;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius: 5px;
+    cursor: pointer;
+font-family:Golos-Text-Semibold;
+    font-size:1.5vh;
+    padding: 0 2vw;
+    margin-right: 1vw;
+}
+
+.btn-confirm:hover {
+    background: #f1f1f1;
+color:#000;
+transition: all .4s ease;
+}
+
+.line-btns {
+    display:flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    width:40vw;
+    gap:.1vw;
 }
 </style>

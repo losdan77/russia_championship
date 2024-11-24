@@ -132,10 +132,9 @@ import eventBus from '../eventBus';
           FIO : this.fio,
           is_coach : this.trainer,
           phone_number:this.phone,
-          about : this.description
+          about : this.description,
         });
         
-        console.log(response);
         if (!response.data) {
           eventBus.emit('show-modal', 'Ошибка при сохранении данных, повторите попытку позже');
           return 0
@@ -177,7 +176,6 @@ import eventBus from '../eventBus';
                 'Content-Type': 'multipart/form-data',
               },
             });
-            console.log(response);
             
             eventBus.emit('show-modal', 'Фото успешно загружено');
           } catch (error) {
@@ -225,8 +223,7 @@ import eventBus from '../eventBus';
       
       try {
         const url = await (await axios.get('/api/images/get_url_image_profile_from_s3')).data
-        this.image_url = url
-        console.log(url);     
+        this.image_url = url 
       } catch (error) {
         console.log(error);
         eventBus.emit('show-modal', 'Ошибка при изменени фото, попробуйте позже');

@@ -5,10 +5,10 @@
     </div>
 
     <div class="navbar-buttons desktop-buttons">
-      <button class="navbar-button" id="btn-telegram-2">
+      <button class="navbar-button" id="btn-telegram-2" @click="goTosite">
         <img src="..//assets/telegram.png"/>
       </button>
-      <button class="navbar-button" id="btn-telegram"><div class="img"></div></button>
+      <button class="navbar-button" id="btn-telegram" @click="goTosite"><div class="img"></div></button>
       <button class="navbar-button" id="btn-input" @click="goToProfile" v-if="onProfile">Профиль</button>
       <button class="navbar-button" @click="logout" id="btn-reg">
         <div class="text-btn" @click="logout">Выйти</div> <img src="..//assets/btn-exit.png"/>
@@ -42,6 +42,9 @@ export default {
     };
   },
   methods: {
+    goTosite(){
+      window.open('https://t.me/test_los_for_channel_bot/','_blank')
+            },
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },

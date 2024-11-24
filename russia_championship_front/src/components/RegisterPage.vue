@@ -4,11 +4,6 @@
     <section class="left-section">
       <div class="section" id="section-1">
         <div class="content-section-1">
-          <!-- <div class="logo-img">
-              <div class="profile-picture">
-                <img :src="image_url" class="main-image" v-if="image_url">
-              </div>
-          </div> -->
         </div>
       </div>
     </section>
@@ -47,7 +42,7 @@
 
 
         <div class="wrapper-input">
-          <label for="password">Пароль*</label>
+          <label for="password">Пароль* (не менее 5 символов)</label>
           <input type="password" id="password" v-model="password" required />
         </div>
         <div class="wrapper-input">
@@ -83,6 +78,9 @@
         <div class="logo-pic">
           <img src="../assets/logo.png"/>
         </div>
+        <div class="line-btn">
+          <div class="btn-exit" @click="goToPrimary">Вернуться</div>
+        </div>
         </div>
       </div>
       </div>
@@ -114,6 +112,9 @@ export default {
       };
     },
     methods: {
+      goToPrimary() {
+        this.$router.push('/')
+      },
       setUserType(type) {
         this.userType = type;
         if (this.organizationType === 'organization') {
@@ -136,7 +137,6 @@ export default {
             city : this.city,
             FIO : this.fullName
           });
-          console.log(response);
           eventBus.emit('show-modal', 'Вы успешно зарегистрировались');
           this.$router.push('/auth')
         } catch (error) {
@@ -658,6 +658,34 @@ export default {
     .top-line-photo {
       display:flex;
       flex-direction: row;
+    }
+
+    .line-btn {
+      width:100%;
+      height:30%;
+      display:flex;
+      justify-content: end;
+      align-items: end;
+    }
+
+    .btn-exit {
+      background-color: #ffffff;
+      color:#111111;
+      border:1px solid #3e3e3e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding:0 2vw;
+      height:4vh;
+      border-radius: 10px;
+      font-family: Golos-Text;
+    }
+
+    .btn-exit:hover {
+      background-color: #3e3e3e;
+      cursor:pointer;
+      color:#fff;
+      transition:all .4s ease;
     }
     </style>
     

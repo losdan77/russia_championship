@@ -22,7 +22,7 @@
           <label for="subject">Выбор субъекта:</label>
           <v-select
             id="subject"
-            class="select-filter"
+            class="select-filter truncate"
             v-model="selectedSubject"
             :options="subjects"
             label="subject_name"
@@ -152,6 +152,8 @@
         </div>
       </div>
       <div class="box-checkbtn">
+        <div class="text-label-checkbox">Временная фильтрация:</div>
+        <div class="checkbox-line">
         <label>
           <input 
             type="checkbox" 
@@ -181,9 +183,10 @@
             />
           6 мес.
         </label>
-    <button @click="toggleMoreFilters" class="btn-checkbox">
-      {{ showMoreFilters ? "Скрыть" : "Еще" }}
-    </button>
+        <button @click="toggleMoreFilters" class="btn-checkbox">
+          {{ showMoreFilters ? "Скрыть" : "Еще" }}
+        </button>
+  </div>
     <transition name="slide-up" class="transition">
     <div v-if="showMoreFilters" class="additional-filters">
       <label>
@@ -404,14 +407,12 @@
           })).data
           this.loading=false 
           this.events = response
-          console.log(this.events);
           if (response.length ===0) {
             eventBus.emit('show-modal', 'По вашему запросу ничего не найдено, вы можете увеличить временные промежутки или изменить'); 
             return 0
           }
 
         } catch (error) {
-          console.log(error.status);
           if (error.status===409) {
             eventBus.emit('show-modal', 'Дата начала не может быть больше даты окончания');  
             return 0
@@ -429,7 +430,7 @@
       async citiesBySub(){
         try {
           this.cities = (await axios.get(`/api/events/all_city_in_subject?id_subject=${this.selectedSubject.id}`)).data
-          console.log(this.cities);
+
           
         } catch (error) {
           // eventBus.emit('show-modal', 'Для более точного поиска рекомендуется выбрать субъект');  
@@ -440,7 +441,7 @@
         this.position = this.position === "Россия" ? "Другие страны" : "Россия";
       },
       updateDateRange() {
-        console.log("Дата от:", this.startDate, "Дата до:", this.endDate);
+
       },
       async deleteFilter(){
         localStorage.removeItem('filters')
@@ -456,7 +457,7 @@
         await this.filter()
       },
       saveFilter() {
-        console.log(this.selectedCities);
+
         localStorage.setItem('filters', 
         JSON.stringify({
           selectedSubject: this.selectedSubject,
@@ -587,7 +588,6 @@
         this.programTypes = (await axios.get('/api//events/all_discipline')).data
         this.countGroup = (await axios.get('/api/events/all_count_values')).data
         // this.selectedPrograms = (await axios.post('/api/events/all_events_with_filters')).data
-        console.log(this.events );
         this.loading=false 
       } catch (error) {
         console.log(error);
@@ -759,6 +759,7 @@
     width:100%;
     font-family: Golos-Text;
     cursor: pointer;
+
   }
 
   .select-container-2 .select-filter {
@@ -790,7 +791,7 @@
     border:0;
     background-color: #f9f9f9;
     font-family:Golos-Text;
-    font-size:1.5vh;
+    font-size:1.2vh;
 }
 
 .date-input{
@@ -839,9 +840,9 @@
   justify-content: center;
   align-items: center;
   font-family:Golos-Text;
-  height:4vh;
+  height:100%;
   border-radius: 50%;
-  width:2vw;
+  width:18%;
   font-size:1.5vh;
   font-family: Golos-Text-Semibold;
   cursor: pointer;
@@ -856,11 +857,24 @@
 
 .box-checkbtn {
   width:25%;
-  height:100%;
+  height:70%;
+  display:flex;
+  flex-direction: column;
+  justify-content:space-between;
+  align-items:space-between;
+}
+
+.checkbox-line {
   display:flex;
   flex-direction: row;
-  justify-content:space-between;
-  align-items:center;
+  height:70%;
+}
+
+.text-label-checkbox {
+  height:30%;
+  font-family: Golos-Text;
+  font-size:1.5vh;
+  color:#9d9d9d;
 }
 
 .btn-save-filter:hover {
@@ -1030,7 +1044,7 @@ label {
   width:100%;
   background: #f5f5f5;
   border: 1px solid #dfdfdf;
-  margin-top:20.5vh;
+  margin-top:5vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1063,8 +1077,8 @@ label {
 }
 
 .btn-checkbox {
-  height:4vh;
   border:0;
+  height:3vh;
   width:70%;
   font-family: Golos-Text;
   font-weight: 600;
@@ -1081,6 +1095,7 @@ label {
   display:flex;
   flex-direction: row;
   gap:.4vw;
+  width:60%;
 }
 
 
@@ -1114,4 +1129,5 @@ label {
     transform: rotate(360deg);
   }
 }
+
   </style>

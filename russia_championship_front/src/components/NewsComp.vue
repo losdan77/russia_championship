@@ -58,16 +58,12 @@
       // Используем fetch для загрузки данных
       async fetchNews() {
         const response = (await fetch('../../public/news.json')).json();
-        console.log(response)
         this.newsData = await response;
-        console.log(this.newsData)
         
       },
       async fetchAnonce() {
         const responses = (await fetch('../../public/anonce.json')).json();
-        console.log(responses)
         this.anonceData = await responses;
-        console.log(this.anonceData)
         
       },
       next() {

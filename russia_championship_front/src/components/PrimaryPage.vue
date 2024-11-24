@@ -1,43 +1,43 @@
 <template>
-    <div>
-        <NavbarPrimary
-            v-if="!isAuth"
-
-        />
-        <NavbarMain
-            v-if="isAuth"
-            @LogoutNav="logout" 
-        />
+    <div class="main-page">
+        <NavbarPrimary/>
+        <div class="main-box">
+            <MultiNavPrimary/>
+        </div>
     </div>
 </template>
 
 <script>
-import NavbarPrimary from '..//components/NavbarPrimary.vue'
-import NavbarMain from './NavbarMain.vue';
-import axios from 'axios';
+import NavbarPrimary from '../components/NavbarPrimary.vue'
+import MultiNavPrimary from '../components/MultiNavPrimary.vue'
 
 export default {
-    data(){
-        return{
-            isAuth : false
+    data () {
+        return {
+
         }
     },
     components : {
         NavbarPrimary,
-        NavbarMain
-    },
-    methods : {
-        logout(){
-            this.isAuth = false
-        }
-    },
-    async mounted(){
-        const response = await axios.get('/api/user/me')
-        if (response.data) {
-            this.isAuth = true
-        }
-        console.log(response);
-        
+        MultiNavPrimary
     }
 }
 </script>
+
+<style scoped>
+.main-page {
+    width:100%;
+    height:95vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap:2vh;
+}
+
+.main-box {
+    width:100%;
+    height:85vh;
+    margin-top:2vh;
+}
+</style>

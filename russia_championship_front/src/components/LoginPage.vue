@@ -104,8 +104,6 @@ import eventBus from '../eventBus';
       async exchangeCodeForToken() {
         // Отправляем код на сервер
         const response = await axios.get(`/api/user/auth/google?code=${this.code}`)
-        console.log(this.code);
-        console.log(response.data);
       },
       GoToRestoring(){
         this.$router.push('/user/restoring')
@@ -121,7 +119,7 @@ import eventBus from '../eventBus';
         });
         if (response.status === 200) {
           eventBus.emit('show-modal', 'Вы успешно авторизованы');
-          return this.$router.push('/profile')
+          return this.$router.push('/info')
         }
         } catch (error) {
           
@@ -138,7 +136,6 @@ import eventBus from '../eventBus';
       },
       async openWindow() {
         const url = await axios.get('/api/user/login/google')
-        console.log(url.data);
         const newWindow = window.open(url.data, '_blank');
         if (newWindow) {
           newWindow.blur();
@@ -149,7 +146,6 @@ import eventBus from '../eventBus';
 
       async openWindowYandex() {
         const url = await axios.get('/api/user/login/yandex')
-        console.log(url.data);
         const newWindow = window.open(url.data, '_blank');
         if (newWindow) {
           newWindow.blur();
@@ -301,7 +297,7 @@ import eventBus from '../eventBus';
 
   }
   .btn-back {
-    background-color: #f5f5f5;
+    background-color: #f9f9f9;
     color:#858585;
     font-family:Golos-Text;
     font-size:1.8vh;

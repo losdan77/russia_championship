@@ -39,7 +39,7 @@
             </div>
             <div v-if="day.day && day.events > 0">
               <div class="count-line">{{ day.events }}</div>
-              <div class="text-line">событий</div>
+              <div class="text-line">события</div>
             </div>
           </div>
         </div>
@@ -51,9 +51,18 @@
       <div class="modal-content">
         <h2>События {{ selectedModalDay.day }} {{ monthsGenitive[selectedMonth].toLowerCase() }}</h2>
         <div v-if="selectedModalDay.events > 0">
-          <ul>
-            <li v-for="(event, index) in selectedModalDayData" :key="index">{{ event }}</li>
-          </ul>
+          <div class="box-cards">
+            <div class="card" v-for="(event, index) in selectedModalDayData" 
+            :key="index"
+            @click="GoToCard(event.Events.id)"
+            >
+              <div class="box">{{ event.Events.date_start }} </div>
+              <div class="box">{{ event.Events.date_end }}</div>
+              <div class="box">{{ event.Events.type_sport.type_name }}</div>
+              <div class="box">{{ event.Events.type_championship.type_name }}</div>
+              <hr>
+          </div>
+          </div>
         </div>
         <div v-else>
           Нет событий в этот день.
@@ -74,7 +83,7 @@ export default {
       selectedYear: 2024,
       selectedMonth: 0,
       eventsByDate: {},
-      months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+      months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"].reverse(),
       monthsGenitive: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
       daysInMonth: [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
       calendarDays: [],
@@ -94,6 +103,9 @@ export default {
     this.cities = await (await axios.get("/api/events/all_city")).data;
   },
   methods: {
+    GoToCard(id){
+      this.$router.push(`/info/card?id=${id}`)
+    },
     async getEvents() {
       try {
         const response = (await axios.post(`/api/events/all_events_with_filters`, { city: this.selectedCities })).data;
@@ -249,15 +261,18 @@ export default {
     font-family: Golos-Text-Semibold;
     font-size:3vh;
     width:100%;
-    height:40%;
+    height:60%;
     display:flex;
     justify-content: center;
-    align-items: center;
+    align-items: start;
   }
   .text-line {
     font-size:1.4vh;
     width:100%;
-    height:30%;
+    height:50%;
+    display:flex;
+    justify-content: center;
+    align-items: end;
     font-family:Golos-Text;
   }
 
@@ -308,8 +323,10 @@ export default {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
+  width: 700px;
+  height: 60vh;
   text-align: center;
+  overflow: hidden;
 }
 
 .close-button {
@@ -324,5 +341,34 @@ export default {
 
 .close-button:hover {
   background-color: #d63031;
+}
+.card {
+  display:flex;
+  flex-direction: row;
+  width:100%;
+  justify-content: center;
+  align-items: center;
+  gap:.5vw;
+  background-color: #e9e9e9;
+  font-size:1.3vh;
+  cursor: pointer;
+}
+.box {
+  width:25%;
+  height:5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow:hidden;
+}
+h2 {
+  font-family: Golos-Text;
+}
+.box-cards {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap:.5vh;
 }
   </style>

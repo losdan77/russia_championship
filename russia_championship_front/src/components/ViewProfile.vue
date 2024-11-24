@@ -83,7 +83,6 @@
     },
     async mounted(){
       const user = await axios.get('/api/user/profile/me')
-      console.log(user);
       if (user.data.User.birthday_date !==null) {//about
         this.birthday_date = user.data.User.birthday_date
       }
@@ -102,8 +101,7 @@
       }
       try {
         const url = await (await axios.get('/api/images/get_url_image_profile_from_s3')).data
-        this.image_url = url
-        console.log(url);     
+        this.image_url = url   
       } catch (error) {
         console.log(error);
         eventBus.emit('show-modal', 'Ошибка при изменени фото, попробуйте позже');
