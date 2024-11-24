@@ -11,6 +11,8 @@ from backend.database import engine_nullpool
 from backend.admin.auth import authentication_backend
 from backend.admin.view import UserAdmin
 from backend.user.router import router as router_user
+from backend.event.router import router as router_event
+from backend.image.router import router as router_image
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,6 +23,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title='Russia championship', lifespan=lifespan)
 
 app.include_router(router_user)
+app.include_router(router_event)
+app.include_router(router_image)
 
 
 admin = Admin(app, engine_nullpool, authentication_backend=authentication_backend)

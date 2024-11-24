@@ -45,6 +45,21 @@ class Settings(BaseSettings):
     def yandex_redirect_url(self):
         return f'https://oauth.yandex.ru/authorize?response_type=code&client_id={self.YANDEX_CLIENT_ID}&redirect_uri={self.YANDEX_REDIRECT_URI}'
     
+    RABBIT_HOST: str
+    RABBIT_PORT: str
+    RABBIT_USER: str
+    RABBIT_PASWORD: str
+
+    @property
+    def RABBITMQ_URL(self):
+        return f'amqp://{self.RABBIT_USER}:{self.RABBIT_PASWORD}@{self.RABBIT_HOST}:{self.RABBIT_PORT}//'
+    
+    ENDPOINT_URL: str
+    AWS_ACCESS_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
+    REGION_NAME: str
+    BACKET_NAME: str
+    
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()

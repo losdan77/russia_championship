@@ -49,3 +49,13 @@ ErrorSinglemodeCode = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail='Одноразовый код неверный',
 )
+
+StartEndDateException = HTTPException(
+    status_code=status.HTTP_409_CONFLICT,
+    detail='Ошибка ввода даты'
+)
+
+NoPermitException = HTTPException(
+    status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+    detail='Недостаточно прав'
+)

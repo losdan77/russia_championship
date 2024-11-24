@@ -8,7 +8,7 @@ from backend.exception import HasExistingUserException, VerifyOldPasswordExcepti
 from backend.exception import OldAndNewPasswordEqException, ErrorLoginException
 from backend.exception import NotEmailRegisterException, ErrorSinglemodeCode
 from backend.user.schemas import SUserRegistartion, SChangePassword, SLoginUser
-from backend.user.schemas import SCreateNewPassword
+from backend.user.schemas import SCreateNewPassword, SUserProfileChange
 from backend.user.dao import UserDAO
 from backend.user.auth import get_password_hash, authenticate_user, create_access_token, verify_password
 from backend.user.dependecies import get_current_user
@@ -17,6 +17,7 @@ from backend.user.decorators import delete_password_and_role
 from backend.tasks.tasks import send_new_password_on_email
 from backend.client.google import get_google_user_info
 from backend.client.yandex import get_yandex_user_info
+from backend.event.dao import CityDAO
 
 templates = Jinja2Templates(directory="templates")
 
@@ -29,6 +30,8 @@ router = APIRouter(
 @router.post('/registr')
 @delete_password_and_role
 async def registr_user(user_data: SUserRegistartion):
+    id_city = None
+
     if user_data.password != user_data.password_verify:
         raise VerifyPasswordException
     
@@ -40,9 +43,17 @@ async def registr_user(user_data: SUserRegistartion):
         raise HasExistingUserException
     
     hashed_password = get_password_hash(user_data.password)
+    
+    if user_data.city:
+        id_city = await CityDAO.find_id(city_name=user_data.city)
+        id_city = id_city['id']
 
     created_user = await UserDAO.add(email=user_data.email,
-                                     hashed_password=hashed_password)
+                                     hashed_password=hashed_password,
+                                     is_coach=user_data.is_coach,
+                                     phone_number=user_data.phone_number,
+                                     id_city=id_city,
+                                     FIO=user_data.FIO)
     
     return created_user
 
@@ -66,7 +77,7 @@ async def change_password(user_data: SChangePassword,
     new_hashed_password = get_password_hash(user_data.new_password)
 
     changed_user = await UserDAO.update_by_id(current_user['id'],
-                               hashed_password = new_hashed_password)
+                                              hashed_password = new_hashed_password)
     return changed_user
 
 
@@ -95,15 +106,27 @@ async def me_user(current_user: User = Depends(get_current_user)):
 @router.get('/profile/me')
 @delete_password_and_role
 async def get_profile_by_id(current_user: User = Depends(get_current_user)):
-    profile = await UserDAO.find_by_id(current_user['id'])
+    profile = await UserDAO.find_by_id_for_profile(current_user['id'])
     return profile
 
 
 @router.get('/profile/{profile_id}')
 @delete_password_and_role
 async def get_profile_by_id(profile_id: int):
-    profile = await UserDAO.find_by_id(profile_id)
+    profile = await UserDAO.find_by_id_for_profile(profile_id)
     return profile
+
+
+@router.patch('/change/profile')
+async def change_profile(user_data: SUserProfileChange,
+                         current_user: User = Depends(get_current_user)):
+    changed_user = await UserDAO.update_by_id(id = current_user['id'],
+                                              FIO = user_data.FIO,
+                                              is_coach = user_data.is_coach,
+                                              birthday_date = user_data.birthday_date,
+                                              phone_number = user_data.phone_number,
+                                              about = user_data.about)
+    return changed_user
 
 
 @router.post('/dont_remember_password')
@@ -112,14 +135,14 @@ async def dont_remember_password(email: EmailStr):
     if not user:
         raise NotEmailRegisterException
     
-    new_password = random.randint(100000, 999999)
+    new_code = random.randint(100000, 999999)
 
-    new_hashed_password = get_password_hash(new_password)
+    new_hashed_code = get_password_hash(new_code)
 
     await UserDAO.update_by_id(user['id'],
-                               hashed_password = new_hashed_password)
+                               single_mode_code = new_hashed_code)
     
-    send_new_password_on_email.delay(email, new_password)
+    send_new_password_on_email.delay(email, new_code)
 
 
 
@@ -127,7 +150,7 @@ async def dont_remember_password(email: EmailStr):
 async def verify_singlemode_code_from_mail(email: EmailStr,
                                            code: str):
     user = await UserDAO.find_one_or_none(email=email)
-    return verify_password(code, user['hashed_password'])
+    return verify_password(code, user['single_mode_code'])
 
 
 @router.post('/create_new_password')
@@ -166,8 +189,8 @@ async def auth_google(code: str, response: Response, request: Request):
                                      google_access_token = user_data.access_token)
     access_token = create_access_token({'sub': str(created_user.id)})
     response.set_cookie('access_token', access_token, httponly=True)
-    return created_user    
-
+    # return created_user    
+    return "succesful"
 
 @router.get('/login/yandex')
 async def login_yandex():
@@ -183,10 +206,12 @@ async def auth_yandex(code: str, response: Response):
     if user:
         access_token = create_access_token({'sub': str(user.id)})
         response.set_cookie('access_token', access_token, httponly=True)
-        return access_token
+        # return access_token
+        return "succesful"
 
     created_user = await UserDAO.add(email = user_data.email,
                                      yandex_access_token = user_data.access_token)
     access_token = create_access_token({'sub': str(created_user.id)})
     response.set_cookie('access_token', access_token, httponly=True)
-    return created_user 
+    # return created_user 
+    return "succesful"

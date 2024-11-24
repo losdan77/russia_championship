@@ -9,7 +9,9 @@ from backend.config import settings
 
 from backend.database import Base
 from backend.user.models import User
-
+from backend.event.models import Countrys, Subjects, City, Events_notification
+from backend.event.models import Type_championship, Type_sport, Events, Sex
+from backend.event.models import Discipline, Events_Discipline, Events_Sex
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

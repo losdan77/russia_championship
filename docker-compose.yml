@@ -42,7 +42,19 @@ services:
     env_file:
       - ./russia_championship_backend/.env-non-dev
     depends_on:
-      - cache
+      - rabbitmq
+    networks:
+      - app_network
+  
+  celery-beat:
+    build:
+      context: ./russia_championship_backend/
+    container_name: russia_championship_celery-beat
+    command: ["/booking_app/docker/celery-beat.sh"]
+    env_file:
+      - ./russia_championship_backend/.env-non-dev
+    depends_on:
+      - rabbitmq
     networks:
       - app_network
 
@@ -66,6 +78,15 @@ services:
       - 5173:5173
     depends_on:
       - backend
+    networks:
+      - app_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: russia_championship_rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
     networks:
       - app_network
 

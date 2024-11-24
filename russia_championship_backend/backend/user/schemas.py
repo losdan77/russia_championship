@@ -4,6 +4,11 @@ class SUserRegistartion(BaseModel):
     email: EmailStr
     password: str
     password_verify: str
+    FIO: str | None = None
+    is_coach: bool
+    phone_number: str | None = None
+    photo_url: str | None = None
+    city: str | None = None
 
 class SChangePassword(BaseModel):
     old_password: str
@@ -34,3 +39,10 @@ class SYandexUserData(BaseModel):
     name: str = Field(alias='real_name')
     email: str = Field(alias='default_email')
     access_token: str
+
+class SUserProfileChange(BaseModel):
+    FIO: str | None = None
+    is_coach: bool
+    birthday_date: str | None = None
+    phone_number: str | None = None
+    about: str | None = None
