@@ -3,7 +3,7 @@ services:
     image: postgres:15
     container_name: russia_championship_db
     ports:
-      - 5430:5432
+      - 5432:5432
     volumes:
       - postgresdata:/var/lib/postgresql/data
     env_file:
@@ -15,7 +15,7 @@ services:
     image: redis
     container_name: russia_championship_cache
     ports:
-      - 6370:6379
+      - 6379:6379
     networks:
       - app_network
 
