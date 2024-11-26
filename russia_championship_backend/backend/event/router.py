@@ -1,5 +1,7 @@
+import time
 import json
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 from datetime import datetime, timedelta
 from backend.event.dao import CountrysDAO, CityDAO, SexDAO, EventsDAO, DisciplineDAO
 from backend.event.dao import TypeChampionshipDAO, TypeSportDAO, SubjectsDAO
@@ -47,6 +49,7 @@ async def get_all_city_in_subject(id_subject: int):
 
 
 @router.get('/all_sex')
+@cache(expire=60)
 async def get_all_sex():
     sex = await SexDAO.find_all()
     return sex
@@ -78,13 +81,16 @@ async def get_all_count_values():
 
 @router.post('/all_events_with_filters')
 async def get_all_events_with_filters(filter_data: SFilter):
+    start_time = time.time()
+
     city_list = None
     type_championship_name_list = None
     type_sport_name_list = None
     sex_name_list = None
     discipline_name_list = None
     count_list = None
-    print(filter_data.type_sport_name)
+
+
     if filter_data.date_start and filter_data.date_end:
         if filter_data.date_start > filter_data.date_end:
             raise StartEndDateException
@@ -111,6 +117,10 @@ async def get_all_events_with_filters(filter_data: SFilter):
                                       count_values = count_list,
                                       date_start = filter_data.date_start,
                                       date_end = filter_data.date_end,)
+    
+    end_time = time.time() - start_time
+    print(end_time)
+    
     return events
 
 
