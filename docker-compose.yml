@@ -3,7 +3,7 @@ services:
     image: postgres:15
     container_name: russia_championship_db
     ports:
-      - 5432:5432
+      - 5434:5432
     volumes:
       - postgresdata:/var/lib/postgresql/data
     env_file:
@@ -12,10 +12,10 @@ services:
       - app_network
 
   cache:
-    image: redis
+    image: redis:7
     container_name: russia_championship_cache
     ports:
-      - 6379:6379
+      - 6380:6379
     networks:
       - app_network
 
@@ -29,8 +29,10 @@ services:
       - db
       - cache
     command: ["/backend/docker/app.sh"]
+    volumes:
+      - shared_data:/backend/backend/static/images
     ports:
-      - 8000:8000
+      - 8001:8000
     networks:
       - app_network
 
@@ -43,6 +45,8 @@ services:
       - ./russia_championship_backend/.env-non-dev
     depends_on:
       - rabbitmq
+    volumes:
+      - shared_data:/backend/backend/static/images
     networks:
       - app_network
   
@@ -85,14 +89,15 @@ services:
     image: rabbitmq:3-management
     container_name: russia_championship_rabbitmq
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 5673:5672
+      - 15673:15672
     networks:
       - app_network
 
 
 volumes:
   postgresdata:
+  shared_data:
 
 networks:
   app_network:
