@@ -37,31 +37,31 @@ jobs:
     - name: Create .env-non-dev file for backend
       run: echo "${{ secrets.ENV_NON_DEV_BOT }}" > ./russia_championship_bot/.env-non-dev
 
-    # 6. Создаём файл .env из секретов
+    # 7. Создаём файл .env из секретов
     - name: Create .env file for frontend
       run: echo "${{ secrets.ENV_FRONT }}" > ./russia_championship_front/.env
 
-    # 7. Проверка Docker Compose
+    # 8. Проверка Docker Compose
     - name: Lint Docker Compose
       run: docker-compose -f docker-compose.yml config
 
-    # 8. Сборка Docker образов
+    # 9. Сборка Docker образов
     - name: Build Docker images
       run: |
         docker-compose -f docker-compose.yml build
 
-    # 9. Копирование файлов на сервер
+    # 10. Копирование файлов на сервер
     - name: Deploy files to server
       run: |
         ssh -o StrictHostKeyChecking=no los@176.123.167.12 "mkdir -p ~/russia_championship"
         rsync -avz --exclude=".git" ./ los@176.123.167.12:~/russia_championship/
 
-    # 10. Запуск Docker Compose на сервере
+    # 11. Запуск Docker Compose на сервере
     - name: Restart application
       run: |
         ssh -o StrictHostKeyChecking=no los@176.123.167.12 << 'EOF'
           cd ~/russia_championship
           sudo docker-compose down
           sudo docker-compose build
-          sudo docker-compose up -d
+          sudo docker-compose up
         EOF
