@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sleep 30
+sleep 35
 
 celery --app=backend.tasks.celery_app:celery worker -l INFO
 
