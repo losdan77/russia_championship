@@ -100,10 +100,10 @@ export default {
             } catch (error) {
                 eventBus.emit('show-modal', 'Неверный проверочный код ');
             }
-            }
+            
 
         },
-        async SubmitRestoring(){
+        async SubmitRestoring() {
             try {
                 const response = await axios.post(`/api/user/create_new_password`,{
                     email: this.email,
@@ -122,7 +122,7 @@ export default {
             
         }
     }
-
+}
 </script>
 
 <style scoped>
