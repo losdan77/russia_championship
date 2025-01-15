@@ -8,6 +8,10 @@ dotenv.config()
 export default defineConfig({
   assetsInclude: ['**/*.JPG'],
   plugins: [vue()],
+  base: '/',
+  build: {
+    outDir: 'dist',
+  },
   server: {
     host : true,
     proxy: {
