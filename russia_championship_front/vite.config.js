@@ -6,6 +6,7 @@ dotenv.config()
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  assetsInclude: ['**/*.JPG'],
   plugins: [vue()],
   server: {
     host : true,

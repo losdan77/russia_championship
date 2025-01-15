@@ -57,12 +57,12 @@
     methods: {
       // Используем fetch для загрузки данных
       async fetchNews() {
-        const response = (await fetch('../../public/news.json')).json();
+        const response = (await fetch('/news.json')).json();
         this.newsData = await response;
         
       },
       async fetchAnonce() {
-        const responses = (await fetch('../../public/anonce.json')).json();
+        const responses = (await fetch('/anonce.json')).json();
         this.anonceData = await responses;
         
       },

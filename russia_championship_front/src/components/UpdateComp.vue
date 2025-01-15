@@ -81,7 +81,7 @@ import axios from 'axios';
         methods: {
             async searcJson(){
                 try {
-                    const response = await axios.get('../../public/updated.json');
+                    const response = await axios.get('/updated.json');
                     this.events = response.data
                 } catch (error) {
                     console.log(error);
