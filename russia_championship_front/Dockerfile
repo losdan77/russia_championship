@@ -17,7 +17,7 @@ RUN chmod a+x /frontend/docker/*.sh
 
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 5173
 
 # Команда для запуска приложения
-CMD ["npx", "serve", "-s", "build"]
+CMD ["npx", "serve", "-s", "dist"]
